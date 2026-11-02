@@ -3,112 +3,129 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Al Noor United Fuel Est - Central Logistics & Inventory Dashboard</title>
+  <title>Al Noor United Fuel Est - Live Centralized Dashboard</title>
   
-  <!-- Bootstrap CSS for layout components -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- External Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
-    :root {
-      --bg-dark: #f8fafc;
-      --bg-card: #ffffff;
-      --accent-blue: #1a365d;
-      --accent-cyan: #0891b2;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --border-color: #cbd5e1;
-      --danger: #ef4444;
-      --success: #10b981;
-      --warning: #f59e0b;
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
-    * { box-sizing: border-box; }
-    body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; padding-bottom: 40px; overflow-x: hidden; }
-
-    /* Toast Notifications */
+    .top-banner {
+      background: #ffeb3b;
+      color: #000;
+      font-weight: bold;
+      padding: 8px;
+      text-align: center;
+      font-size: 0.95rem;
+      border-bottom: 2px solid #ddd;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #1a365d;
+      font-weight: bold;
+    }
+    .nav-pills .nav-link {
+      color: #1a365d;
+      font-weight: 600;
+      border: 1px solid #cbd5e1;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    .table thead th {
+      background-color: #1a365d !important;
+      color: #fff !important;
+      font-size: 0.8rem;
+      border: 1px solid #2a4365;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .table td {
+      font-size: 0.85rem;
+      vertical-align: middle;
+    }
+    /* Toast Notification Styles */
     #toastContainer {
-      position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 8px;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
     .toast-msg {
-      background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-left: 4px solid var(--accent-blue); animation: fadeInOut 1.5s ease forwards;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-left: 4px solid #2563eb;
     }
-    .toast-msg.success { border-left-color: var(--success); }
-    .toast-msg.warning { border-left-color: var(--warning); }
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateY(10px); }
-      15% { opacity: 1; transform: translateY(0); }
-      85% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-10px); }
+    /* Label Studio Cards Grid */
+    .labels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
     }
-
-    /* Top Summary Banner */
-    .top-banner {
-      background: #ffeb3b; color: #000; font-weight: bold; padding: 10px 16px; text-align: center; font-size: 0.95rem; border-bottom: 2px solid #ddd;
-    }
-
-    /* Navigation & Tabs */
-    .nav-pills .nav-link.active { background-color: #1a365d; font-weight: bold; }
-    .nav-pills .nav-link { color: #1a365d; font-weight: 600; border: 1px solid #cbd5e1; margin-right: 5px; margin-bottom: 5px; }
-
-    .table thead th {
-      background-color: #1a365d !important; color: #fff !important; font-size: 0.8rem; border: 1px solid #2a4365; text-align: center; vertical-align: middle;
-    }
-    .table td { font-size: 0.85rem; vertical-align: middle; }
-    .clickable-item { color: #0d6efd; cursor: pointer; text-decoration: underline; font-weight: bold; }
-
-    /* Barcode Labels Studio Cards Grid */
-    .labels-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
     .sticker-card {
-      background: white; color: #0f172a; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between;
-      position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 125px; border: 1px solid #cbd5e1;
+      background: white;
+      color: #0f172a;
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid #cbd5e1;
+      min-height: 140px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-    .sticker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
-    .del-btn { background: #fee2e2; color: #dc2626; border: none; border-radius: 6px; width: 20px; height: 20px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; }
-    .sticker-title { font-size: 0.75rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; line-height: 1.2; }
-    .meta-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #f8fafc; padding: 4px; border-radius: 4px; margin-bottom: 4px; text-align: center; border: 1px solid #e2e8f0; }
-    .meta-box label { font-size: 0.45rem; color: #64748b; display: block; font-weight: 600; }
-    .meta-box span { font-size: 0.6rem; font-weight: 700; color: #1e293b; }
-    .custom-link-badge { background: #e0f2fe; color: #0369a1; padding: 2px 4px; border-radius: 4px; font-size: 0.55rem; margin-bottom: 4px; word-break: break-all; }
-    .codes-flex-container { display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #cbd5e1; padding-top: 5px; gap: 6px; }
-    .barcode-section { flex: 1; text-align: left; }
-    .barcode-section svg { width: 100%; max-width: 110px; height: 30px; }
-    .qrcode-section { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 32px; }
-    .qrcode-section svg { width: 32px !important; height: 32px !important; }
-    .qrcode-label { font-size: 0.4rem; color: #64748b; margin-top: 1px; font-weight: 600; }
-
+    .meta-box {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: #f8fafc;
+      padding: 4px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+    .meta-box label { font-size: 0.5rem; color: #64748b; display: block; font-weight: 600; }
+    .meta-box span { font-size: 0.65rem; font-weight: 700; color: #1e293b; }
+    
     @media print {
       body * { visibility: hidden; }
-      #tab-labels, #tab-labels * { visibility: visible; }
-      #tab-labels { position: absolute; left: 0; top: 0; width: 100%; }
-      .labels-controls-bar, header, .nav-pills, .top-banner, .modal-overlay { display: none !important; }
-      .sticker-card.unselected-print { display: none !important; }
-      .labels-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-      @page { size: auto; margin: 15mm; }
+      #tabLabelsPane, #tabLabelsPane * { visibility: visible; }
+      #tabLabelsPane { position: absolute; left: 0; top: 0; width: 100%; }
+      .labels-controls-bar, .btn, .nav-pills, .top-banner, header { display: none !important; }
     }
   </style>
-  <style id="dynamicPrintStyles"></style>
 </head>
 <body onload="initDashboard()">
 
-  <!-- SYSTEM LOGIN MODAL -->
+  <!-- Toast Notification Container -->
+  <div id="toastContainer"></div>
+
+  <!-- LOGIN MODAL -->
   <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content shadow-lg border-0">
         <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title fw-bold">🔐 Al Noor Fuel Est. Authentication / تسجيل الدخول</h5>
+          <h5 class="modal-title fw-bold">🔐 System Authentication / تسجيل الدخول</h5>
         </div>
         <div class="modal-body p-4">
           <form id="loginForm" onsubmit="handleLogin(event)">
             <div class="mb-3">
               <label class="form-label fw-semibold">Email / البريد الإلكتروني</label>
-              <input type="email" id="loginEmail" class="form-control" placeholder="kassarsaif@gmail.com or noor@noor.com" required>
-              <small class="text-muted">Admins: kassarsaif@gmail.com | noor@noor.com</small>
+              <input type="email" id="loginEmail" class="form-control" placeholder="clerk@noor.com or kassarsaif@gmail.com" required>
             </div>
             <div class="mb-3">
               <label class="form-label fw-semibold">Password / كلمة المرور</label>
@@ -122,29 +139,27 @@
     </div>
   </div>
 
-  <!-- TOAST NOTIFICATIONS CONTAINER -->
-  <div id="toastContainer"></div>
-
   <!-- MAIN DASHBOARD SECTION -->
   <div id="dashboardSection" class="container-fluid py-3 px-4">
     
     <!-- Top Summary Banner -->
     <div id="topBanner" class="top-banner mb-3 rounded shadow-sm">
       <span id="bannerTitleLabel">Total Closing Stock Quantity</span> (<span id="bannerMonthLabel">April 2026</span>): <span id="bannerQty">0.00</span> &nbsp;|&nbsp; <span id="bannerAmtTitleLabel">Total Closing Amount</span>: SAR <span id="bannerAmt">0.00</span>
+      <span class="badge bg-danger ms-3" id="cloudStatusBadge">☁️ Connecting to Cloud...</span>
     </div>
 
     <!-- Company Header Navbar -->
     <div class="d-flex justify-content-between align-items-center mb-3 bg-white p-3 rounded shadow-sm flex-wrap gap-2">
       <div>
         <h4 class="fw-bold mb-0 text-primary">مؤسسة النور المتحدة للوقود</h4>
-        <h5 class="fw-bold mb-0 text-dark">Al Noor United Fuel Est - Central Logistics & Barcode Studio</h5>
-        <small class="text-muted"><span class="badge bg-success">● Live Session Active</span> Main Warehouse / Southern Warehouse Central Hub</small>
+        <h5 class="fw-bold mb-0 text-dark">Al Noor United Fuel Est</h5>
+        <small class="text-muted"><span class="badge bg-success">● Live Cloud Session Active</span> Main Warehouse / Southern Warehouse Stock & Barcode Studio</small>
       </div>
       <div class="d-flex align-items-center gap-3">
         <!-- Language Switcher -->
         <div class="d-flex align-items-center gap-1">
           <label class="fw-bold small mb-0 text-secondary">🌐 Lang:</label>
-          <select id="langSelect" class="form-select form-select-sm fw-bold" onchange="changeLanguage(this.value)" style="width: 115px;">
+          <select id="langSelect" class="form-select form-select-sm fw-bold" onchange="changeLanguage(this.value)" style="width: 110px;">
             <option value="en" selected>English</option>
             <option value="ar">العربية</option>
           </select>
@@ -154,190 +169,59 @@
       </div>
     </div>
 
-    <!-- MASTER MONTH SELECTION & EXCEL / UTILITIES BAR -->
+    <!-- MASTER MONTH SELECTION BAR -->
     <div class="card p-3 mb-3 shadow-sm border-0 bg-white">
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
         <div class="d-flex align-items-center gap-2">
-          <label class="fw-bold text-primary mb-0" id="masterMonthLabelText">📅 Active Month:</label>
-          <select id="masterMonthSelect" class="form-select form-select-sm fw-bold border-primary" onchange="onMasterMonthChanged()" style="width: 200px;">
-            <!-- Populated dynamically -->
+          <label class="fw-bold text-primary mb-0">📅 Master Active Month Selector:</label>
+          <select id="masterMonthSelect" class="form-select form-select-sm fw-bold border-primary" onchange="onMasterMonthChanged()" style="width: 210px;" size="3">
+            <!-- Dynamically populated -->
           </select>
         </div>
         <div class="d-flex gap-2 align-items-center flex-wrap">
-          <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display:none;" onchange="importExcelFile(event)">
-          <button class="btn btn-sm btn-success fw-semibold" onclick="document.getElementById('excelFileInput').click()">📊 <span id="importExcelBtnText">Import Excel/CSV</span></button>
-          <button class="btn btn-sm btn-outline-success fw-semibold" onclick="downloadExcelTemplate()">📂 <span id="downloadTemplateBtnText">Download Template</span></button>
-          <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="downloadAvailableInventoryExcel()">📥 <span id="downloadInvExcelText">Export Inventory</span></button>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-secondary fw-semibold dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              📑 <span id="reportsDropdownText">Reports</span>
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item fw-semibold" href="#" onclick="downloadStockMovementReport()">📊 Stock Movement Report</a></li>
-              <li><a class="dropdown-item fw-semibold" href="#" onclick="downloadStockLedgerReport()">📑 Detailed Stock Ledger</a></li>
-              <li><a class="dropdown-item fw-semibold" href="#" onclick="exportBackupJSON()">💾 Save JSON Backup</a></li>
-            </ul>
-          </div>
+          <label class="btn btn-sm btn-outline-secondary fw-semibold mb-0 cursor-pointer">
+            📂 Upload Opening Balances <input type="file" id="csvUpload" accept=".csv, .xlsx, .xls" onchange="processFileUpload(event)" hidden>
+          </label>
+          <button class="btn btn-sm btn-outline-success fw-semibold" onclick="downloadUploadTemplate()">📄 Template</button>
+          <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="exportCloudBackupJSON()">💾 JSON Backup</button>
         </div>
       </div>
     </div>
 
-    <!-- SEPARATED NAVIGATION TABS -->
+    <!-- NAVIGATION TABS -->
     <ul class="nav nav-pills mb-3" id="dashboardTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#tabOverview" type="button" role="tab" onclick="switchTab('overview')">1. 📊 Overview & KPIs</button>
+      <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tabOpeningBalance" type="button" onclick="switchTab('opening')">1. Opening Balance (الرصيد الافتتاحي)</button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="opening-tab" data-bs-toggle="pill" data-bs-target="#tabOpeningBalance" type="button" role="tab" onclick="switchTab('opening')">2. 📦 Opening & Register</button>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tabItemIndex" type="button" onclick="switchTab('index')">2. Item Index (سجل الأصناف)</button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tx-tab" data-bs-toggle="pill" data-bs-target="#tabTransactions" type="button" role="tab" onclick="switchTab('transactions')">3. 📝 Transactions / Item Card</button>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tabTransactions" type="button" onclick="switchTab('transactions')">3. Transactions / Item Card (حركة الأصناف)</button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="labels-tab" data-bs-toggle="pill" data-bs-target="#tabLabels" type="button" role="tab" onclick="switchTab('labels')">4. 🏷️ Barcode & QR Studio</button>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tabAnalytics" type="button" onclick="renderContributionChart()">4. Top 20 Outgoing Ratio (تحليل الصادر)</button>
       </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="analytics-tab" data-bs-toggle="pill" data-bs-target="#tabAnalytics" type="button" role="tab" onclick="switchTab('analytics')">5. 📈 Analytics & Reorder</button>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tabLowestInventory" type="button" onclick="renderLowestInventoryTable()">5. Lowest Stock / High Movers</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tabLabelsPane" type="button" onclick="renderLabelsGrid()">6. 🏷️ Barcode & QR Studio</button>
       </li>
     </ul>
 
     <div class="tab-content" id="dashboardTabContent">
       
-      <!-- TAB 1: OVERVIEW & SUMMARY KPIs -->
-      <div class="tab-pane fade show active" id="tabOverview" role="tabpanel">
-        <div class="row g-3 mb-4">
-          <div class="col-md-3">
-            <div class="card p-3 shadow-sm border-0 bg-white">
-              <h6 class="text-muted fw-semibold">Total Registered Items</h6>
-              <h3 class="fw-bold text-primary mb-0" id="kpiTotalItems">0</h3>
-              <small class="text-success">Active inventory master</small>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card p-3 shadow-sm border-0 bg-white">
-              <h6 class="text-muted fw-semibold">Closing Stock Valuation</h6>
-              <h3 class="fw-bold text-success mb-0" id="kpiValuation">SAR 0.00</h3>
-              <small class="text-muted">Current period value</small>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card p-3 shadow-sm border-0 bg-white">
-              <h6 class="text-muted fw-semibold">Approved Classifications</h6>
-              <h3 class="fw-bold text-info mb-0" id="kpiCategories">0</h3>
-              <small class="text-muted">Distinct categories</small>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card p-3 shadow-sm border-0 bg-white">
-              <h6 class="text-muted fw-semibold">Registered Warehouses</h6>
-              <h3 class="fw-bold text-warning mb-0" id="kpiWarehouses">2</h3>
-              <small class="text-muted">Main & Southern Hubs</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="card p-4 shadow-sm border-0 mb-4 bg-white">
-          <h5 class="fw-bold text-primary mb-3">📊 Classifications Breakdown</h5>
-          <div style="position: relative; height: 350px;">
-            <canvas id="overviewCategoryChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 2: OPENING BALANCE & INVENTORY REGISTER -->
-      <div class="tab-pane fade" id="tabOpeningBalance" role="tabpanel">
-        <div class="card p-3 shadow-sm border-0 mb-4 bg-white">
+      <!-- TAB 1: OPENING BALANCE SHEET -->
+      <div class="tab-pane fade show active" id="tabOpeningBalance" role="tabpanel">
+        <div class="card p-3 shadow-sm border-0 mb-4">
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-            <h5 class="fw-bold text-primary mb-0">📦 <span id="openingSheetTitleText">Opening Balance & Inventory Register</span> (<span id="openingTabTitleMonth">April 2026</span>)</h5>
-            <div class="d-flex gap-2 align-items-center flex-wrap">
-              <input type="text" id="openingSearch" class="form-control form-control-sm" placeholder="🔍 Search inventory code or name..." oninput="renderOpeningBalanceTable()" style="width: 220px;">
-              <button type="button" class="btn btn-sm btn-success fw-semibold text-nowrap" id="addItemTriggerBtn" onclick="openAddModal()">+ Add New Item</button>
-            </div>
-          </div>
-          <div class="table-responsive" style="max-height: 550px; overflow-y: auto;">
-            <table class="table table-bordered table-hover align-middle">
-              <thead>
-                <tr>
-                  <th style="width: 50px;"><input type="checkbox" id="selectAllInv" onchange="toggleSelectAllInventory(this)"></th>
-                  <th style="width: 60px;">SN</th>
-                  <th style="width: 120px;">Item Code</th>
-                  <th>Item Name (English)</th>
-                  <th>Item Name (Arabic)</th>
-                  <th style="width: 100px;">Unit</th>
-                  <th style="width: 140px;">Opening Balance</th>
-                  <th style="width: 140px;">Opening Amount</th>
-                  <th style="width: 110px;">Barcode Gen</th>
-                  <th style="width: 90px;">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="openingBalanceTableBody">
-                <!-- Dynamically populated -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 3: REAL-TIME TRANSACTIONS / ITEM CARD -->
-      <div class="tab-pane fade" id="tabTransactions" role="tabpanel">
-        <div class="card p-3 shadow-sm border-0 mb-4 bg-white">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold text-primary mb-0">📝 Real-Time Transactional Movement (Item Card)</h5>
+            <h5 class="fw-bold text-primary mb-0">📦 Opening Balance Sheet (<span id="openingTabTitleMonth">April 2026</span>)</h5>
             <div class="d-flex gap-2 align-items-center">
-              <button class="btn btn-sm btn-outline-secondary fw-semibold" onclick="resetTxFilter()">Show All Inventory</button>
-              <input type="text" id="txSearchInput" class="form-control form-control-sm" list="inventoryListOptions" placeholder="🔍 Search item code..." oninput="filterTransactionsBySearch(this.value)" style="width: 230px;">
-              <datalist id="inventoryListOptions"></datalist>
+              <input type="text" id="openingSearch" class="form-control form-control-sm" placeholder="🔍 Search inventory..." oninput="renderOpeningBalanceTable()" style="width: 200px;">
+              <button type="button" class="btn btn-sm btn-success fw-semibold" onclick="openAddModal()">+ Add New Item</button>
             </div>
           </div>
-          
-          <!-- Transaction Entry Form -->
-          <form id="txForm" onsubmit="submitTransaction(event)" class="row g-2 mb-3 p-3 bg-light rounded border">
-            <input type="hidden" id="editTxId">
-            <div class="col-md-2">
-              <label class="form-label small fw-semibold">Item Code *</label>
-              <input type="text" id="txItemCode" class="form-control form-control-sm" list="inventoryListOptions" placeholder="Select code" oninput="onItemCodeTyped(this.value)" required>
-            </div>
-            <div class="col-md-2">
-              <label class="form-label small fw-semibold">Voucher No. *</label>
-              <input type="text" id="txVoucher" class="form-control form-control-sm" placeholder="V-100" required>
-            </div>
-            <div class="col-md-2">
-              <label class="form-label small fw-semibold">Movement Type *</label>
-              <select id="txType" class="form-select form-select-sm" onchange="toggleMovementFields()">
-                <option value="OUTGOING" selected>OUTGOING / صادر</option>
-                <option value="INBOUND">INBOUND / وارد</option>
-                <option value="RETURN">RETURN / مرتجع</option>
-              </select>
-            </div>
-            <div class="col-md-2">
-              <label class="form-label small fw-semibold">Quantity *</label>
-              <input type="number" id="txQty" class="form-control form-control-sm" placeholder="100" required>
-            </div>
-            <div class="col-md-2" id="invoiceAmountContainer" style="display:none;">
-              <label class="form-label small fw-semibold">Total Invoice (SAR) *</label>
-              <input type="number" step="0.01" id="txInvoiceAmt" class="form-control form-control-sm" placeholder="2500.00">
-            </div>
-            <div class="col-md-2" id="costCentreContainer">
-              <label class="form-label small fw-semibold">Cost Centre (مركز تكلفة)</label>
-              <input type="text" id="txCostCentre" class="form-control form-control-sm" placeholder="Optional">
-            </div>
-            <div class="col-md-2" id="stationContainer">
-              <label class="form-label small fw-semibold">Station / Location</label>
-              <input type="text" id="txStation" class="form-control form-control-sm" placeholder="Optional">
-            </div>
-            <div class="col-md-2">
-              <label class="form-label small fw-semibold">Date (YYYY-MM-DD)</label>
-              <input type="date" id="txDateInput" class="form-control form-control-sm" required>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-semibold">Remarks (ملاحظات)</label>
-              <input type="text" id="txRemarks" class="form-control form-control-sm" placeholder="Optional notes">
-            </div>
-            <div class="col-md-3 d-flex align-items-end">
-              <button type="submit" id="txSubmitBtn" class="btn btn-primary btn-sm w-100 fw-bold">Post Entry Row</button>
-            </div>
-          </form>
-
           <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
             <table class="table table-bordered table-hover align-middle">
               <thead>
@@ -345,342 +229,297 @@
                   <th>SN</th>
                   <th>Item Code</th>
                   <th>Item Name (English)</th>
-                  <th>Opening Bal</th>
-                  <th>Date</th>
-                  <th>Voucher</th>
-                  <th>Incoming Qty</th>
-                  <th>Outgoing Qty</th>
-                  <th>Closing Stock</th>
-                  <th>Closing Amount</th>
-                  <th>Average Price</th>
-                  <th>Actions / Remarks</th>
+                  <th>Item Name (Arabic)</th>
+                  <th>Opening Balance</th>
+                  <th>Opening Amount</th>
+                  <th>Opening Date</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
-              <tbody id="transactionTableBody">
-                <!-- Dynamically populated -->
-              </tbody>
+              <tbody id="openingBalanceTableBody"></tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- TAB 4: BARCODE & QR STUDIO -->
-      <div class="tab-pane fade" id="tabLabels" role="tabpanel">
-        <div class="card p-3 shadow-sm border-0 mb-4 bg-white">
+      <!-- TAB 2: ITEM INDEX -->
+      <div class="tab-pane fade" id="tabItemIndex" role="tabpanel">
+        <div class="card p-3 shadow-sm border-0 mb-4">
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-            <div class="d-flex gap-2 align-items-center flex-wrap">
-              <input type="text" id="labelsSearch" class="form-control form-control-sm" placeholder="🔍 Search in studio labels..." oninput="renderLabelsGrid()" style="width: 220px;">
-              <select id="labelsCategoryFilter" class="form-select form-select-sm" onchange="renderLabelsGrid()" style="width: 180px;">
-                <option value="">All Classifications</option>
-              </select>
-              <div class="d-flex align-items-center gap-1 bg-light px-2 py-1 rounded border">
-                <label class="small fw-semibold text-secondary mb-0">Label Lang:</label>
-                <select id="barcodeLangSelect" class="form-select form-select-sm border-0 bg-transparent py-0 fw-bold" onchange="renderLabelsGrid()" style="width: 105px;">
-                  <option value="en">English</option>
-                  <option value="ar">العربية</option>
-                </select>
-              </div>
-              <div class="d-flex align-items-center gap-1">
-                <input type="checkbox" id="selectAllStudioLabels" onchange="toggleSelectAllStudioLabels(this)">
-                <label for="selectAllStudioLabels" class="small fw-semibold text-secondary mb-0 cursor-pointer">Select All Studio Labels</label>
-              </div>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="openPrintSettingsModal()">⚙️ Page & Label Size</button>
-              <button class="btn btn-sm btn-danger fw-semibold" onclick="clearLabelStudio()">🗑️ Clear Studio</button>
-              <button class="btn btn-sm btn-success fw-semibold" onclick="triggerCleanPrint()">🖨️ Print Selected Labels</button>
+            <h5 class="fw-bold text-primary mb-0">📊 Master Item Index & Closing Stock Sheet</h5>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <input type="date" id="indexFromDate" class="form-control form-control-sm" onchange="renderItemIndexTable()" style="width: 135px;">
+              <input type="date" id="indexToDate" class="form-control form-control-sm" onchange="renderItemIndexTable()" style="width: 135px;">
+              <button class="btn btn-sm btn-outline-secondary" onclick="resetIndexFilter()">Show All</button>
+              <input type="text" id="indexSearchInput" class="form-control form-control-sm" placeholder="🔍 Search code/name..." oninput="filterIndexBySearch(this.value)" style="width: 180px;">
             </div>
           </div>
-          
-          <div class="labels-grid" id="labelsGridContainer">
-            <!-- Dynamically populated label sticker cards -->
+          <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-bordered table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>SN</th>
+                  <th>Item Code</th>
+                  <th>Item Name (English)</th>
+                  <th>Item Name (Arabic)</th>
+                  <th>Opening Balance</th>
+                  <th>Incoming Qty</th>
+                  <th>Outgoing Qty</th>
+                  <th>Closing Stock</th>
+                  <th>Closing Amount</th>
+                  <th>Average Price</th>
+                  <th>Actions / Label</th>
+                </tr>
+              </thead>
+              <tbody id="itemIndexTableBody"></tbody>
+            </table>
           </div>
         </div>
       </div>
 
-      <!-- TAB 5: ANALYTICS & REORDER PRIORITY -->
+      <!-- TAB 3: TRANSACTIONS / ITEM CARD -->
+      <div class="tab-pane fade" id="tabTransactions" role="tabpanel">
+        <div class="card p-3 shadow-sm border-0 mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold text-primary mb-0">📝 Real-Time Transactional Movement (Item Card)</h5>
+            <input type="text" id="txSearchInput" class="form-control form-control-sm" placeholder="🔍 Filter item..." oninput="filterTransactionsBySearch(this.value)" style="width: 220px;">
+          </div>
+          
+          <!-- Transaction Entry Form -->
+          <form id="txForm" onsubmit="submitTransaction(event)" class="row g-2 mb-3 p-3 bg-light rounded border">
+            <input type="hidden" id="editTxId">
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold">Item Code</label>
+              <input type="text" id="txItemCode" class="form-control form-control-sm" placeholder="Item Code" required>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold">Voucher No.</label>
+              <input type="text" id="txVoucher" class="form-control form-control-sm" placeholder="V-102" required>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold">Movement Type</label>
+              <select id="txType" class="form-select form-select-sm" onchange="toggleMovementFields()">
+                <option value="OUTGOING" selected>OUTGOING / صادر</option>
+                <option value="INBOUND">INBOUND / وارد</option>
+                <option value="RETURN">RETURN / مرتجع</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold">Quantity</label>
+              <input type="number" id="txQty" class="form-control form-control-sm" placeholder="100" required>
+            </div>
+            <div class="col-md-2" id="invoiceAmountContainer" style="display:none;">
+              <label class="form-label small fw-semibold">Invoice Amt (SAR) *</label>
+              <input type="number" step="0.01" id="txInvoiceAmt" class="form-control form-control-sm" placeholder="2500.00">
+            </div>
+            <div class="col-md-2" id="costCentreContainer">
+              <label class="form-label small fw-semibold">Cost Centre</label>
+              <input type="text" id="txCostCentre" class="form-control form-control-sm" placeholder="Optional">
+            </div>
+            <div class="col-md-2" id="stationContainer">
+              <label class="form-label small fw-semibold">Station / Location</label>
+              <input type="text" id="txStation" class="form-control form-control-sm" placeholder="Optional">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold">Date</label>
+              <input type="date" id="txDateInput" class="form-control form-control-sm" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Remarks</label>
+              <input type="text" id="txRemarks" class="form-control form-control-sm" placeholder="Optional notes">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button type="submit" id="txSubmitBtn" class="btn btn-primary btn-sm w-100 fw-bold">Post Entry Row</button>
+            </div>
+          </form>
+
+          <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+            <table class="table table-bordered table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>SN</th>
+                  <th>Item Code</th>
+                  <th>Item Name (En)</th>
+                  <th>Date</th>
+                  <th>Voucher</th>
+                  <th>Incoming</th>
+                  <th>Outgoing</th>
+                  <th>Closing</th>
+                  <th>Closing Amount</th>
+                  <th>Avg Price</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="transactionTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: ANALYTICS -->
       <div class="tab-pane fade" id="tabAnalytics" role="tabpanel">
-        <div class="row g-4">
-          <div class="col-md-12">
-            <div class="card p-4 shadow-sm border-0 bg-white">
-              <h5 class="fw-bold text-primary mb-3">📈 Top 20 Outgoing Items Contribution Ratios</h5>
-              <div style="position: relative; height: 380px;">
-                <canvas id="contributionChart"></canvas>
-              </div>
+        <div class="card p-4 shadow-sm border-0 mb-4">
+          <h5 class="fw-bold text-primary mb-3">📈 Top 20 Outgoing Items Contribution Ratios</h5>
+          <div style="position: relative; height: 400px;">
+            <canvas id="contributionChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: LOWEST STOCK -->
+      <div class="tab-pane fade" id="tabLowestInventory" role="tabpanel">
+        <div class="card p-3 shadow-sm border-0 mb-4">
+          <h5 class="fw-bold text-primary mb-3">🚨 Lowest Inventory with Highest Moving Items</h5>
+          <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-bordered table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>SN</th>
+                  <th>Item Code</th>
+                  <th>Item Name (English)</th>
+                  <th>Current Stock</th>
+                  <th>Total Outgoing</th>
+                  <th>Velocity Score</th>
+                  <th>Priority Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="lowestInventoryTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: BARCODE & QR STUDIO -->
+      <div class="tab-pane fade" id="tabLabelsPane" role="tabpanel">
+        <div class="card p-3 shadow-sm border-0 mb-4">
+          <div class="labels-controls-bar d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div class="d-flex gap-2 align-items-center">
+              <input type="text" id="labelsSearch" class="form-control form-control-sm" placeholder="🔍 Filter studio labels..." oninput="renderLabelsGrid()" style="width: 220px;">
+              <select id="barcodeLangSelect" class="form-select form-select-sm" onchange="renderLabelsGrid()" style="width: 130px;">
+                <option value="en">English Label</option>
+                <option value="ar">Arabic Label</option>
+              </select>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-danger" onclick="clearStudioLabels()">🗑️ Clear Studio</button>
+              <button class="btn btn-sm btn-success" onclick="window.print()">🖨️ Print Selected Labels</button>
             </div>
           </div>
-          <div class="col-md-12">
-            <div class="card p-3 shadow-sm border-0 bg-white">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold text-primary mb-0">🚨 Lowest Stock with Highest Moving Items (Reorder Priority)</h5>
-                <input type="text" id="lowestInvSearch" class="form-control form-control-sm" placeholder="🔍 Filter item..." oninput="renderLowestInventoryTable()" style="width: 220px;">
-              </div>
-              <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
-                <table class="table table-bordered table-hover align-middle">
-                  <thead>
-                    <tr>
-                      <th>SN</th>
-                      <th>Item Code</th>
-                      <th>Item Name (English)</th>
-                      <th>Item Name (Arabic)</th>
-                      <th>Current Closing Stock</th>
-                      <th>Total Outgoing Qty</th>
-                      <th>Turnover / Velocity Score</th>
-                      <th>Priority Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="lowestInventoryTableBody">
-                    <!-- Dynamically populated -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          <div class="labels-grid" id="labelsGridContainer"></div>
         </div>
       </div>
 
     </div>
-
   </div>
 
-  <!-- ADD / EDIT ITEM MODAL -->
+  <!-- ADD ITEM MODAL -->
   <div class="modal fade" id="addItemModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title fw-bold" id="modalHeaderTitle">Add New Inventory Item</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Add New Inventory Item</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <form id="newItemForm" onsubmit="addNewItem(event)">
             <div class="mb-3">
-              <label class="form-label fw-semibold">Item Code (رمز الصنف) *</label>
+              <label class="form-label fw-semibold">Item Code (رمز الصنف)</label>
               <input type="text" id="newCode" class="form-control" required>
             </div>
             <div class="mb-3">
-              <label class="form-label fw-semibold">Item Name (English) *</label>
-              <input type="text" id="newDescEn" class="form-control" placeholder="Leave blank for auto-translation" required>
+              <label class="form-label fw-semibold">Item Description (English)</label>
+              <input type="text" id="newDescEn" class="form-control" placeholder="English Description">
             </div>
             <div class="mb-3">
-              <label class="form-label fw-semibold">Item Name (Arabic / عربي) *</label>
-              <input type="text" id="newDescAr" class="form-control" placeholder="اتركه فارغاً للترجمة التلقائية" required>
+              <label class="form-label fw-semibold">Item Description (Arabic / عربي)</label>
+              <input type="text" id="newDescAr" class="form-control" placeholder="وصف الصنف بالعربي">
             </div>
             <div class="mb-3">
-              <label class="form-label fw-semibold">Unit (الوحدة)</label>
-              <input type="text" id="newUnit" class="form-control" value="Pieces">
-            </div>
-            <div class="row g-2 mb-3">
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Opening Balance (الرصيد الافتتاحي)</label>
-                <input type="number" id="newOpenQty" class="form-control" value="0" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Opening Amount (المبلغ)</label>
-                <input type="number" step="0.01" id="newOpenAmt" class="form-control" value="0.00" required>
-              </div>
+              <label class="form-label fw-semibold">Opening Balance (الرصيد الافتتاحي)</label>
+              <input type="number" id="newOpenQty" class="form-control" value="0" required>
             </div>
             <div class="mb-3">
-              <label class="form-label fw-semibold">Opening Date (تاريخ الافتتاح)</label>
+              <label class="form-label fw-semibold">Opening Amount (المبلغ)</label>
+              <input type="number" step="0.01" id="newOpenAmt" class="form-control" value="0.00" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Opening Date</label>
               <input type="date" id="newOpenDate" class="form-control" required>
             </div>
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Classification (التصنيف)</label>
-              <input type="text" id="newClassification" class="form-control" value="General / عام">
-            </div>
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Custom Data / Link (رابط أو ملاحظة)</label>
-              <input type="text" id="newCustomData" class="form-control" placeholder="Optional link or badge">
-            </div>
-            <button type="submit" class="btn btn-success w-100 fw-bold">Save Item</button>
+            <button type="submit" class="btn btn-success w-100 fw-bold">Save Item to Cloud</button>
           </form>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- PRINT CONFIGURATION MODAL -->
-  <div class="modal fade" id="printSettingsModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title fw-bold">⚙️ Page & Label Size Configurator</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label fw-semibold">1. Page Size</label>
-            <select id="cfgPageSize" class="form-select">
-              <option value="A4" selected>A4 Sheet (210mm × 297mm)</option>
-              <option value="Letter">Letter Sheet (8.5" × 11")</option>
-              <option value="Roll4x6">Thermal Roll 4" × 6" (100mm × 150mm)</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-semibold">2. Grid Layout Preset</label>
-            <select id="cfgGridPreset" class="form-select">
-              <option value="5_labels_row">5 Labels per row (5 columns)</option>
-              <option value="8_labels" selected>8 Labels per page (2 columns × 4 rows)</option>
-              <option value="12_labels">12 Labels per page (3 columns × 4 rows)</option>
-              <option value="21_labels">21 Labels per page (3 columns × 7 rows)</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-semibold">3. Page Orientation</label>
-            <select id="cfgOrientation" class="form-select">
-              <option value="portrait" selected>Portrait</option>
-              <option value="landscape">Landscape</option>
-            </select>
-          </div>
-          <button type="button" class="btn btn-success w-100 fw-bold" onclick="applyPrintSettingsAndClose()">💾 Save Settings & Apply</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- FIREBASE SDK & LIVE SYNC SCRIPT WITH YOUR CONFIG -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
-  <!-- Bootstrap JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script>
-    // Localization Dictionary
-    const translations = {
-      en: {
-        bannerQtyText: "Total Closing Stock Quantity",
-        bannerAmtText: "Total Closing Amount",
-        subHeader: "Main Warehouse / Southern Warehouse Central Hub",
-        staffClerk: "Staff Clerk",
-        masterMonthLabelText: "📅 Active Month:",
-        uploadOpenBtn: "Import Excel/CSV",
-        downloadTemplateBtnText: "Download Template",
-        downloadInvExcelText: "Export Inventory",
-        reportsDropdownText: "Reports",
-        overviewTab: "1. 📊 Overview & KPIs",
-        openingTab: "2. 📦 Opening & Register",
-        txTab: "3. 📝 Transactions / Item Card",
-        labelsTab: "4. 🏷️ Barcode & QR Studio",
-        analyticsTab: "5. 📈 Analytics & Reorder",
-        openingSheetTitleText: "Opening Balance & Inventory Register",
-        addItemBtn: "+ Add New Item",
-        thSn: "SN",
-        thItemCode: "Item Code",
-        thItemDescEn: "Item Name (English)",
-        thItemDescAr: "Item Name (Arabic)",
-        thUnit: "Unit",
-        thOpeningBal: "Opening Balance",
-        thOpeningAmt: "Opening Amount",
-        thMonth: "Month",
-        thActions: "Actions",
-        deleteBtn: "Delete",
-        editBtn: "Edit"
-      },
-      ar: {
-        bannerQtyText: "إجمالي كمية المخزون الختامي",
-        bannerAmtText: "إجمالي المبلغ الختامي",
-        subHeader: "المستودع الرئيسي / مستودع المنطقة الجنوبية",
-        staffClerk: "موظف مبيعات",
-        masterMonthLabelText: "📅 الشهر النشط:",
-        uploadOpenBtn: "استيراد ملف إكسل",
-        downloadTemplateBtnText: "تحميل القالب",
-        downloadInvExcelText: "تصدير المخزون",
-        reportsDropdownText: "التقارير",
-        overviewTab: "1. 📊 نظرة عامة",
-        openingTab: "2. 📦 الرصيد الافتتاحي والسجل",
-        txTab: "3. 📝 حركات المخزون وبطاقة الصنف",
-        labelsTab: "4. 🏷️ استوديو الباركود والـ QR",
-        analyticsTab: "5. 📈 التحليلات وإعادة الطلب",
-        openingSheetTitleText: "جدول الرصيد الافتتاحي وسجل الأصناف",
-        addItemBtn: "+ إضافة صنف جديد",
-        thSn: "الرقم",
-        thItemCode: "رمز الصنف",
-        thItemDescEn: "اسم الصنف (إنجليزي)",
-        thItemDescAr: "اسم الصنف (عربي)",
-        thUnit: "الوحدة",
-        thOpeningBal: "الرصيد الافتتاحي",
-        thOpeningAmt: "المبلغ الافتتاحي",
-        thMonth: "الشهر",
-        thActions: "الإجراءات",
-        deleteBtn: "حذف",
-        editBtn: "تعديل"
-      }
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhg68PNSomYN0YIhtrov3IUonVYRIBm68",
+      authDomain: "inventory-web-dashboard.firebaseapp.com",
+      projectId: "inventory-web-dashboard",
+      storageBucket: "inventory-web-dashboard.firebasestorage.app",
+      messagingSenderId: "254891790308",
+      appId: "1:254891790308:web:8c284465565c405046c1f1",
+      measurementId: "G-4Q2M2RC0NX"
     };
 
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Global App State
+    let currentUser = null;
     let currentLang = 'en';
-    let activeTabName = 'overview';
-    let currentUser = null; 
+    let activeTabName = 'opening';
+    let inventoryCatalog = [];
+    let transactions = [];
+    let studioItemCodes = new Set();
+    let chartInstance = null;
 
     const USERS = {
       "kassarsaif@gmail.com": { pass: "72724@Whdash", role: "admin", name: "System Admin" },
-      "noor@noor.com": { pass: "Aa123456@", role: "admin", name: "Director Noor" },
-      "clerk@gmail.com": { pass: "Noor@123", role: "clerk", name: "Staff Clerk" }
+      "clerk@noor.com": { pass: "Noor@123", role: "clerk", name: "Staff Clerk" }
     };
 
-    const dictionary = {
-      "black gypsum screw": "برغى جبس اسود خشن",
-      "stickers 95 noor khawi": "استيكرات 95 نور خوي",
-      "stickers 91": "استيكرات 91",
-      "sticker diesel": "استيكر ديزل",
-      "letterhead (noor)": "ترويسة خطاب (النور)",
-      "stickers diesel noor khawi": "استيكرات ديزل نور خوي",
-      "cleaning oil": "زيت منظف",
-      "diesel": "ديزل",
-      "petrol": "بنزين",
-      "oil": "زيت",
-      "screw": "برغي",
-      "sticker": "استيكر"
-    };
-
-    function autoTranslateText(text, targetLang) {
-      if (!text) return "";
-      let clean = text.trim().toLowerCase();
-      if (targetLang === 'ar') {
-        if (dictionary[clean]) return dictionary[clean];
-        return text;
-      } else {
-        for (let k in dictionary) {
-          if (dictionary[k] === text.trim()) return k.toUpperCase();
-        }
-        return text;
-      }
-    }
-
-    // Auto-disappearing Toast Notifications
     window.showToast = function(message, type = 'success') {
       const container = document.getElementById('toastContainer');
       if (!container) return;
       const toast = document.createElement('div');
-      toast.className = `toast-msg ${type}`;
+      toast.className = `toast-msg ${type === 'warning' ? 'bg-warning text-dark' : 'bg-dark text-white'}`;
       toast.textContent = message;
       container.appendChild(toast);
-      setTimeout(() => { toast.remove(); }, 1500);
+      setTimeout(() => toast.remove(), 2500);
     };
 
-    // Initial Inventory Catalog and Transactions
-    let inventoryCatalog = [
-      { code: "763225", descEn: "Black Gypsum Screw 3/4*7", descAr: "برغى جبس اسود خشن 3/4*7", unit: "Pieces", openQty: 42000, openAmt: 1207.50, openDate: "2026-01-01", classification: "Hardware / أدوات", customData: "High Runner" },
-      { code: "749", descEn: "Stickers 95 Noor Khawi", descAr: "استيكرات 95 نور خوي", unit: "Roll", openQty: 40000, openAmt: 50000, openDate: "2026-02-15", classification: "Stationery / مطبوعات", customData: "Station Branding" },
-      { code: "784", descEn: "Stickers 91", descAr: "استيكرات 91", unit: "Roll", openQty: 4800, openAmt: 5000, openDate: "2026-03-03", classification: "Stationery / مطبوعات", customData: "Station Branding" },
-      { code: "741", descEn: "Sticker Diesel", descAr: "استيكر ديزل", unit: "Pieces", openQty: 125, openAmt: 1250, openDate: "2026-03-03", classification: "Stationery / مطبوعات", customData: "Fuel Label" }
-    ];
-
-    let transactions = [
-      { id: 101, code: "763225", date: "2026-03-10", voucher: "V-01", inQty: 10000, outQty: 0, invoiceAmt: 300.00, costCentre: "", station: "", remarks: "Initial Inbound shipment" },
-      { id: 102, code: "763225", date: "2026-03-15", voucher: "V-02", inQty: 0, outQty: 5000, invoiceAmt: 0, costCentre: "Station 10", station: "Southern Depot", remarks: "Dispatched to station" },
-      { id: 103, code: "749", date: "2026-03-20", voucher: "V-03", inQty: 0, outQty: 2000, invoiceAmt: 0, costCentre: "Station 12", station: "Main Hub", remarks: "Regular dispatch" }
-    ];
-
-    let studioItemCodes = new Set(["763225", "749"]);
-    let checkedItemCodes = new Set();
-    let selectedStudioCodes = new Set(["763225", "749"]);
-    let currentTxFilterCode = null;
-    let overviewChartInstance = null;
-    let contributionChartInstance = null;
-
-    function initDashboard() {
+    window.initDashboard = function() {
       checkAuth();
       setupDateRestrictions();
-      populateDynamicMonths();
-      renderAll();
-    }
+      
+      // Real-time Cloud Sync Listeners
+      onSnapshot(collection(db, "inventoryCatalog"), (snapshot) => {
+        inventoryCatalog = [];
+        snapshot.forEach(docSnap => inventoryCatalog.push(docSnap.data()));
+        document.getElementById('cloudStatusBadge').className = "badge bg-success ms-3";
+        document.getElementById('cloudStatusBadge').innerText = "☁️ Live Cloud Synced";
+        populateDynamicMonths();
+        renderAll();
+      }, (err) => {
+        console.error("Firestore Catalog Sync Error:", err);
+        document.getElementById('cloudStatusBadge').className = "badge bg-danger ms-3";
+        document.getElementById('cloudStatusBadge').innerText = "☁️ Cloud Sync Offline";
+      });
+
+      onSnapshot(collection(db, "warehouseTransactions"), (snapshot) => {
+        transactions = [];
+        snapshot.forEach(docSnap => transactions.push(docSnap.data()));
+        renderAll();
+      });
+    };
 
     function checkAuth() {
       const savedUser = sessionStorage.getItem('currentUser');
@@ -693,7 +532,7 @@
       }
     }
 
-    function handleLogin(e) {
+    window.handleLogin = function(e) {
       e.preventDefault();
       const email = document.getElementById('loginEmail').value.trim().toLowerCase();
       const pass = document.getElementById('loginPassword').value.trim();
@@ -703,25 +542,19 @@
         currentUser = { email, role: USERS[email].role, name: USERS[email].name };
         sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
         errEl.style.display = 'none';
-        
-        var modalEl = document.getElementById('loginModal');
-        var modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal) modal.hide();
-
+        bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
         applyRolePermissions();
-        renderAll();
-        showToast(currentLang === 'ar' ? "تم تسجيل الدخول بنجاح!" : "Logged in successfully!");
+        showToast("Logged in successfully!");
       } else {
         errEl.innerText = "Invalid Email or Password / البريد الإلكتروني أو كلمة المرور غير صحيحة";
         errEl.style.display = 'block';
       }
-    }
+    };
 
-    function logoutSession() {
+    window.logoutSession = function() {
       sessionStorage.removeItem('currentUser');
-      currentUser = null;
       window.location.reload();
-    }
+    };
 
     function applyRolePermissions() {
       const roleBadge = document.getElementById('userRoleBadge');
@@ -737,23 +570,40 @@
     function setupDateRestrictions() {
       const todayStr = new Date().toISOString().split('T')[0];
       const dateInput = document.getElementById('txDateInput');
-      const modalDateInput = document.getElementById('newOpenDate');
+      const modalDate = document.getElementById('newOpenDate');
       if (dateInput) { dateInput.max = todayStr; dateInput.value = todayStr; }
-      if (modalDateInput) { modalDateInput.value = todayStr; }
+      if (modalDate) { modalDate.value = todayStr; }
     }
+
+    window.changeLanguage = function(lang) {
+      currentLang = lang;
+      document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      document.documentElement.setAttribute('lang', lang);
+      renderAll();
+    };
+
+    window.switchTab = function(name) {
+      activeTabName = name;
+      renderAll();
+    };
+
+    window.onMasterMonthChanged = function() { renderAll(); };
 
     function populateDynamicMonths() {
       const select = document.getElementById('masterMonthSelect');
       if (!select) return;
-      const prevSelected = select.value;
+      const prev = select.value;
       select.innerHTML = '';
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth() + 1;
+      const cur = `${y}-${m < 10 ? '0' + m : m}`;
 
-      let activeMonthsSet = new Set(["2026-03", "2026-04"]);
-      inventoryCatalog.forEach(i => { if (i.openDate) activeMonthsSet.add(i.openDate.substring(0, 7)); });
-      transactions.forEach(t => { if (t.date) activeMonthsSet.add(t.date.substring(0, 7)); });
+      let setMonths = new Set([cur]);
+      inventoryCatalog.forEach(i => { if (i.openDate) setMonths.add(i.openDate.substring(0, 7)); });
+      transactions.forEach(t => { if (t.date) setMonths.add(t.date.substring(0, 7)); });
 
-      let sortedMonths = Array.from(activeMonthsSet).sort();
-      sortedMonths.forEach(val => {
+      Array.from(setMonths).sort().forEach(val => {
         let opt = document.createElement('option');
         opt.value = val;
         opt.text = val;
@@ -763,85 +613,85 @@
       let optAll = document.createElement('option');
       optAll.value = 'ALL';
       optAll.text = 'All Months / YTD';
-      select.appendChild(optAll);
+      select.appendChild(select.options.length > 0 ? optAll : optAll);
 
-      if (prevSelected && Array.from(select.options).some(o => o.value === prevSelected)) {
-        select.value = prevSelected;
-      } else {
-        select.value = '2026-04';
+      select.value = prev && Array.from(select.options).some(o => o.value === prev) ? prev : cur;
+    }
+
+    function getRolloverStats(itemCode, targetMonth) {
+      const item = inventoryCatalog.find(i => i.code === itemCode);
+      if (!item) return { openQty: 0, openAmt: 0 };
+      const itemOpenMonth = item.openDate ? item.openDate.substring(0, 7) : '2026-01';
+      if (targetMonth < itemOpenMonth) return { openQty: 0, openAmt: 0 };
+      if (targetMonth === itemOpenMonth) return { openQty: parseFloat(item.openQty) || 0, openAmt: parseFloat(item.openAmt) || 0 };
+
+      let [currY, currM] = itemOpenMonth.split('-').map(Number);
+      let [targetY, targetM] = targetMonth.split('-').map(Number);
+      let runningQ = parseFloat(item.openQty) || 0;
+      let runningA = parseFloat(item.openAmt) || 0;
+
+      while (currY < targetY || (currY === targetY && currM < targetM)) {
+        let mStr = `${currY}-${currM < 10 ? '0' + currM : currM}`;
+        let monthTxs = transactions.filter(t => t.code === itemCode && t.date.startsWith(mStr));
+        let mIn = 0, mOut = 0, mInAmt = 0;
+        monthTxs.forEach(t => {
+          let inQ = parseFloat(t.inQty) || 0;
+          let outQ = parseFloat(t.outQty) || 0;
+          if (inQ > 0) { mIn += inQ; mInAmt += (parseFloat(t.invoiceAmt) || 0); }
+          if (outQ > 0) { mOut += outQ; }
+        });
+        let simQ = runningQ + mIn;
+        let simA = runningA + mInAmt;
+        if (mOut > 0) {
+          let avgP = simQ > 0 ? simA / simQ : 0;
+          simQ -= mOut; simA -= mOut * avgP;
+        }
+        runningQ = simQ; runningA = simA;
+        currM++; if (currM > 12) { currM = 1; currY++; }
       }
-    }
-
-    function changeLanguage(lang) {
-      currentLang = lang;
-      const htmlTag = document.documentElement;
-      if (lang === 'ar') {
-        htmlTag.setAttribute('dir', 'rtl');
-        htmlTag.setAttribute('lang', 'ar');
-      } else {
-        htmlTag.setAttribute('dir', 'ltr');
-        htmlTag.setAttribute('lang', 'en');
-      }
-      document.getElementById('barcodeLangSelect').value = lang;
-      renderAll();
-      showToast(lang === 'ar' ? "تم التبديل إلى العربية" : "Switched to English");
-    }
-
-    function switchTab(tabName) {
-      activeTabName = tabName;
-      if (tabName === 'overview') renderOverviewKPIs();
-      if (tabName === 'labels') renderLabelsGrid();
-      if (tabName === 'analytics') { renderContributionChart(); renderLowestInventoryTable(); }
-      renderAll();
-    }
-
-    function onMasterMonthChanged() {
-      renderAll();
-    }
-
-    function openAddModal() {
-      document.getElementById('newItemForm').reset();
-      document.getElementById('newOpenQty').value = 0;
-      document.getElementById('newOpenAmt').value = 0.00;
-      document.getElementById('newOpenDate').value = new Date().toISOString().split('T')[0];
-      var myModal = new bootstrap.Modal(document.getElementById('addItemModal'));
-      myModal.show();
-    }
-
-    function openPrintSettingsModal() {
-      var myModal = new bootstrap.Modal(document.getElementById('printSettingsModal'));
-      myModal.show();
-    }
-
-    function applyPrintSettingsAndClose() {
-      var modalEl = document.getElementById('printSettingsModal');
-      var modal = bootstrap.Modal.getInstance(modalEl);
-      if (modal) modal.hide();
-      showToast(currentLang === 'ar' ? "تم حفظ إعدادات الطباعة بنجاح!" : "Print settings applied successfully!");
+      return { openQty: runningQ, openAmt: runningA };
     }
 
     function getItemStats(itemCode, selectedMonth) {
       const item = inventoryCatalog.find(i => i.code === itemCode);
-      if (!item) return { openQty: 0, openAmt: 0, inQty: 0, outQty: 0, closingQty: 0, closingAmt: 0, avgPrice: 0 };
+      if (!item) return { openQty: 0, openAmt: 0, inQty: 0, outQty: 0, closingQty: 0, closingAmt: 0, avgPrice: 0, qtyDiff: 0 };
+      
+      if (selectedMonth !== 'ALL') {
+        const rollover = getRolloverStats(itemCode, selectedMonth);
+        let monthTxs = transactions.filter(t => t.code === itemCode && t.date.startsWith(selectedMonth));
+        let mIn = monthTxs.reduce((acc, t) => acc + (parseFloat(t.inQty) || 0), 0);
+        let mOut = monthTxs.reduce((acc, t) => acc + (parseFloat(t.outQty) || 0), 0);
+        let mInAmt = monthTxs.reduce((acc, t) => acc + (parseFloat(t.invoiceAmt) || 0), 0);
 
-      let totalIn = transactions.filter(tx => tx.code === itemCode).reduce((acc, tx) => acc + (parseFloat(tx.inQty) || 0), 0);
-      let totalOut = transactions.filter(tx => tx.code === itemCode).reduce((acc, tx) => acc + (parseFloat(tx.outQty) || 0), 0);
-      let totalInAmt = transactions.filter(tx => tx.code === itemCode).reduce((acc, tx) => acc + (parseFloat(tx.invoiceAmt) || 0), 0);
+        let simQ = rollover.openQty + mIn;
+        let simA = rollover.openAmt + mInAmt;
+        if (mOut > 0) {
+          let avgP = simQ > 0 ? simA / simQ : (rollover.openQty > 0 ? rollover.openAmt / rollover.openQty : 0);
+          simQ -= mOut; simA -= mOut * avgP;
+        }
+        let avgPrice = simQ > 0 ? simA / simQ : (rollover.openQty > 0 ? rollover.openAmt / rollover.openQty : 0);
+        return { openQty: rollover.openQty, openAmt: rollover.openAmt, inQty: mIn, outQty: mOut, closingQty: simQ, closingAmt: simA, avgPrice, qtyDiff: mIn - mOut };
+      }
 
-      const openQ = parseFloat(item.openQty) || 0;
-      const openA = parseFloat(item.openAmt) || 0;
-      const avgPrice = (openQ + totalIn) > 0 ? (openA + totalInAmt) / (openQ + totalIn) : 0;
-      const finalClosingQty = openQ + totalIn - totalOut;
-      const finalClosingAmt = finalClosingQty * avgPrice;
-
-      return { openQty: openQ, openAmt: openA, inQty: totalIn, outQty: totalOut, closingQty: finalClosingQty, closingAmt: finalClosingAmt, avgPrice };
+      let totalIn = transactions.filter(t => t.code === itemCode).reduce((acc, t) => acc + (parseFloat(t.inQty) || 0), 0);
+      let totalOut = transactions.filter(t => t.code === itemCode).reduce((acc, t) => acc + (parseFloat(t.outQty) || 0), 0);
+      let totalInAmt = transactions.filter(t => t.code === itemCode).reduce((acc, t) => acc + (parseFloat(t.invoiceAmt) || 0), 0);
+      let openQ = parseFloat(item.openQty) || 0;
+      let openA = parseFloat(item.openAmt) || 0;
+      let avgPrice = (openQ + totalIn) > 0 ? (openA + totalInAmt) / (openQ + totalIn) : 0;
+      let closingQty = openQ + totalIn - totalOut;
+      return { openQty: openQ, openAmt: openA, inQty: totalIn, outQty: totalOut, closingQty, closingAmt: closingQty * avgPrice, avgPrice, qtyDiff: totalIn - totalOut };
     }
 
     function updateBannerTotals() {
-      let totalQty = 0;
-      let totalAmt = 0;
+      const masterSelect = document.getElementById('masterMonthSelect');
+      if (!masterSelect) return;
+      const selMonth = masterSelect.value;
+      document.getElementById('bannerMonthLabel').innerText = masterSelect.options[masterSelect.selectedIndex]?.text || selMonth;
+
+      let totalQty = 0, totalAmt = 0;
       inventoryCatalog.forEach(item => {
-        const stats = getItemStats(item.code, 'ALL');
+        const stats = getItemStats(item.code, selMonth);
         totalQty += stats.closingQty;
         totalAmt += stats.closingAmt;
       });
@@ -849,611 +699,321 @@
       document.getElementById('bannerAmt').innerText = totalAmt.toLocaleString(undefined, {minimumFractionDigits: 2});
     }
 
-    function renderAll() {
-      updateBannerTotals();
-      renderOverviewKPIs();
+    window.renderAll = function() {
       renderOpeningBalanceTable();
+      renderItemIndexTable();
       renderTransactionTable();
-      renderLabelsGrid();
-      renderContributionChart();
       renderLowestInventoryTable();
-      populateDatalist();
-    }
+      renderLabelsGrid();
+      updateBannerTotals();
+    };
 
-    function renderOverviewKPIs() {
-      document.getElementById('kpiTotalItems').textContent = inventoryCatalog.length;
-      let totalValuation = 0;
-      inventoryCatalog.forEach(i => {
-        const stats = getItemStats(i.code, 'ALL');
-        totalValuation += stats.closingAmt;
-      });
-      document.getElementById('kpiValuation').textContent = `SAR ${totalValuation.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-      
-      const categories = new Set(inventoryCatalog.map(i => i.classification || "General"));
-      document.getElementById('kpiCategories').textContent = categories.size;
-
-      // Render Overview Category Bar Chart
-      const counts = {};
-      inventoryCatalog.forEach(i => {
-        const cls = i.classification || "General";
-        counts[cls] = (counts[cls] || 0) + 1;
-      });
-
-      const ctx = document.getElementById('overviewCategoryChart').getContext('2d');
-      if (overviewChartInstance) overviewChartInstance.destroy();
-
-      overviewChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: Object.keys(counts),
-          datasets: [{
-            label: currentLang === 'ar' ? 'عدد المواد' : 'Item Count',
-            data: Object.values(counts),
-            backgroundColor: '#1a365d',
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-        }
-      });
-    }
-
-    function renderOpeningBalanceTable() {
+    window.renderOpeningBalanceTable = function() {
       const tbody = document.getElementById('openingBalanceTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
-      
-      const searchQuery = (document.getElementById('openingSearch').value || '').toLowerCase();
-      const filtered = inventoryCatalog.filter(item => 
-        item.code.toLowerCase().includes(searchQuery) || item.descEn.toLowerCase().includes(searchQuery) || item.descAr.toLowerCase().includes(searchQuery)
-      );
+      const master = document.getElementById('masterMonthSelect');
+      const selMonth = master ? master.value : 'ALL';
+      const search = (document.getElementById('openingSearch')?.value || '').toLowerCase();
 
-      filtered.forEach((item, index) => {
-        const isGenerated = studioItemCodes.has(item.code);
-        const isChecked = checkedItemCodes.has(item.code);
-        const displayName = currentLang === 'ar' ? (item.descAr || item.descEn) : (item.descEn || item.descAr);
-
+      let sn = 1;
+      inventoryCatalog.filter(i => i.code.toLowerCase().includes(search) || i.descEn?.toLowerCase().includes(search)).forEach(item => {
+        const rollover = getRolloverStats(item.code, selMonth === 'ALL' ? (item.openDate?.substring(0,7) || '2026-01') : selMonth);
         tbody.innerHTML += `
           <tr>
-            <td class="text-center"><input type="checkbox" class="table-checkbox" value="${item.code}" ${isChecked ? 'checked' : ''} onchange="handleInventoryCheckbox(this)"></td>
-            <td class="text-center fw-bold">${index + 1}</td>
-            <td class="text-center"><span class="clickable-item" onclick="goToTransactions('${item.code}')">${item.code}</span></td>
-            <td class="fw-semibold">${item.descEn || '-'}</td>
-            <td class="fw-semibold">${item.descAr || '-'}</td>
-            <td>${item.unit || 'Pieces'}</td>
-            <td class="text-end">${parseFloat(item.openQty || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
-            <td class="text-end">SAR ${parseFloat(item.openAmt || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+            <td class="text-center fw-bold">${sn++}</td>
+            <td class="text-center fw-bold text-primary">${item.code}</td>
+            <td>${item.descEn || '-'}</td>
+            <td>${item.descAr || '-'}</td>
+            <td class="text-end">${rollover.openQty.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+            <td class="text-end">SAR ${rollover.openAmt.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+            <td class="text-center">${item.openDate || '2026-01-01'}</td>
             <td class="text-center">
-              <button class="btn btn-sm ${isGenerated ? 'btn-success' : 'btn-outline-primary'} py-0 px-2" onclick="toggleStudioLabel('${item.code}')">
-                ${isGenerated ? '✓ Generated' : '+ Generate'}
-              </button>
-            </td>
-            <td class="text-center">
-              <button class="btn btn-sm btn-outline-danger py-0 px-1" onclick="deleteItem('${item.code}')">✕</button>
+              <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="deleteCatalogItem('${item.code}')">Delete</button>
             </td>
           </tr>
         `;
       });
-    }
+    };
 
-    function handleInventoryCheckbox(cb) {
-      if (cb.checked) checkedItemCodes.add(cb.value);
-      else checkedItemCodes.delete(cb.value);
-    }
+    window.renderItemIndexTable = function() {
+      const tbody = document.getElementById('itemIndexTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      const master = document.getElementById('masterMonthSelect');
+      const selMonth = master ? master.value : 'ALL';
+      const search = (document.getElementById('indexSearchInput')?.value || '').toLowerCase();
 
-    function toggleSelectAllInventory(masterCb) {
-      const cbs = document.querySelectorAll('.table-checkbox');
-      cbs.forEach(cb => {
-        cb.checked = masterCb.checked;
-        if (masterCb.checked) checkedItemCodes.add(cb.value);
-        else checkedItemCodes.delete(cb.value);
+      let sn = 1;
+      inventoryCatalog.filter(i => i.code.toLowerCase().includes(search) || i.descEn?.toLowerCase().includes(search)).forEach(item => {
+        const stats = getItemStats(item.code, selMonth);
+        tbody.innerHTML += `
+          <tr>
+            <td class="text-center fw-bold">${sn++}</td>
+            <td class="text-center fw-bold">${item.code}</td>
+            <td>${item.descEn || '-'}</td>
+            <td>${item.descAr || '-'}</td>
+            <td class="text-end">${stats.openQty.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+            <td class="text-end text-success fw-bold">${stats.inQty.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+            <td class="text-end text-danger fw-bold">${stats.outQty.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+            <td class="text-end fw-bold text-primary">${stats.closingQty.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+            <td class="text-end text-success">SAR ${stats.closingAmt.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+            <td class="text-end">SAR ${stats.avgPrice.toFixed(2)}</td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-primary py-0 px-2" onclick="addLabelToStudio('${item.code}')">🏷️ Studio</button>
+            </td>
+          </tr>
+        `;
       });
-    }
+    };
 
-    function toggleStudioLabel(code) {
-      if (studioItemCodes.has(code)) {
-        studioItemCodes.delete(code);
-        selectedStudioCodes.delete(code);
-        showToast("Removed from Barcode Studio", "warning");
-      } else {
-        studioItemCodes.add(code);
-        selectedStudioCodes.add(code);
-        showToast("Added to Barcode Studio!");
-      }
-      renderOpeningBalanceTable();
-      renderLabelsGrid();
-    }
-
-    function deleteItem(code) {
-      if (confirm(currentLang === 'ar' ? `هل أنت متأكد من حذف الصنف ${code}؟` : `Are you sure you want to delete item code ${code}?`)) {
-        inventoryCatalog = inventoryCatalog.filter(i => i.code !== code);
-        transactions = transactions.filter(t => t.code !== code);
-        studioItemCodes.delete(code);
-        selectedStudioCodes.delete(code);
-        renderAll();
-        showToast("Item successfully deleted.", "warning");
-      }
-    }
-
-    function populateDatalist() {
-      const datalist = document.getElementById('inventoryListOptions');
-      if (!datalist) return;
-      datalist.innerHTML = '';
-      inventoryCatalog.forEach(item => {
-        const displayName = currentLang === 'ar' ? (item.descAr || item.descEn) : (item.descEn || item.descAr);
-        datalist.innerHTML += `<option value="${item.code}">${item.code} - ${displayName}</option>`;
-      });
-    }
-
-    function goToTransactions(code) {
-      currentTxFilterCode = code;
-      activeTabName = 'transactions';
-      document.querySelector('#tx-tab').click();
-      document.getElementById('txItemCode').value = code;
-      document.getElementById('txSearchInput').value = code;
-      renderTransactionTable();
-    }
-
-    function resetTxFilter() {
-      currentTxFilterCode = null;
-      document.getElementById('txSearchInput').value = "";
-      document.getElementById('txItemCode').value = "";
-      renderTransactionTable();
-    }
-
-    function filterTransactionsBySearch(val) {
-      const query = val.trim().toLowerCase();
-      currentTxFilterCode = query ? query : null;
-      renderTransactionTable();
-    }
-
-    function onItemCodeTyped(val) {
-      const query = val.trim().toLowerCase();
-      const matched = inventoryCatalog.find(i => i.code.toLowerCase() === query);
-      if (matched) {
-        currentTxFilterCode = matched.code;
-        renderTransactionTable();
-      }
-    }
-
-    function toggleMovementFields() {
-      const type = document.getElementById('txType').value;
-      const invoiceContainer = document.getElementById('invoiceAmountContainer');
-      const invoiceInput = document.getElementById('txInvoiceAmt');
-      if (type === 'INBOUND') {
-        invoiceContainer.style.display = 'block';
-        invoiceInput.required = true;
-      } else {
-        invoiceContainer.style.display = 'none';
-        invoiceInput.required = false;
-      }
-    }
-
-    function renderTransactionTable() {
+    window.renderTransactionTable = function() {
       const tbody = document.getElementById('transactionTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
+      let sn = 1;
 
-      let sortedCatalog = [...inventoryCatalog];
-      if (currentTxFilterCode) {
-        sortedCatalog = sortedCatalog.filter(i => i.code.toLowerCase().includes(currentTxFilterCode.toLowerCase()) || i.descEn.toLowerCase().includes(currentTxFilterCode.toLowerCase()));
-      }
-
-      let globalSn = 1;
-      sortedCatalog.forEach(item => {
-        const openQ = parseFloat(item.openQty) || 0;
-        const openA = parseFloat(item.openAmt) || 0;
-        const openAvg = openQ > 0 ? openA / openQ : 0;
-
-        const itemTxs = transactions.filter(tx => tx.code === item.code);
-
-        // Opening row
+      transactions.sort((a,b) => b.date.localeCompare(a.date)).forEach(tx => {
+        const item = inventoryCatalog.find(i => i.code === tx.code);
         tbody.innerHTML += `
-          <tr class="table-secondary">
-            <td class="text-center fw-bold">${globalSn++}</td>
-            <td class="text-center"><span class="badge bg-dark">${item.code}</span></td>
-            <td class="fw-semibold">${item.descEn || '-'}</td>
-            <td class="text-end">${openQ.toLocaleString()}</td>
-            <td>${item.openDate || '2026-01-01'}</td>
-            <td>OPENING</td>
-            <td class="text-success text-end fw-bold">0</td>
-            <td class="text-danger text-end fw-bold">0</td>
-            <td class="text-end fw-bold">${openQ.toLocaleString()}</td>
-            <td class="text-end text-success fw-bold">SAR ${openA.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-            <td class="text-end">SAR ${openAvg.toFixed(2)}</td>
-            <td>Opening Balance Rollover</td>
+          <tr>
+            <td class="text-center">${sn++}</td>
+            <td class="text-center fw-bold">${tx.code}</td>
+            <td>${item?.descEn || '-'}</td>
+            <td>${tx.date}</td>
+            <td>${tx.voucher}</td>
+            <td class="text-success text-end">${tx.inQty || 0}</td>
+            <td class="text-danger text-end">${tx.outQty || 0}</td>
+            <td class="text-end fw-bold">-</td>
+            <td class="text-end">-</td>
+            <td class="text-end">-</td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-danger py-0 px-1" onclick="deleteTransaction('${tx.id}')">✕</button>
+            </td>
           </tr>
         `;
-
-        if (itemTxs.length > 0) {
-          let runningQty = openQ;
-          let runningAmt = openA;
-          itemTxs.forEach(tx => {
-            let inQ = parseFloat(tx.inQty) || 0;
-            let outQ = parseFloat(tx.outQty) || 0;
-            if (inQ > 0) { runningQty += inQ; runningAmt += (parseFloat(tx.invoiceAmt) || 0); }
-            if (outQ > 0) {
-              let avgP = runningQty > 0 ? runningAmt / runningQty : 0;
-              runningQty -= outQ;
-              runningAmt -= outQ * avgP;
-            }
-            let currentAvg = runningQty > 0 ? runningAmt / runningQty : 0;
-
-            tbody.innerHTML += `
-              <tr>
-                <td class="text-center fw-bold">${globalSn++}</td>
-                <td class="text-center"><span class="badge bg-light text-dark border">${tx.code}</span></td>
-                <td class="fw-semibold">${item.descEn || '-'}</td>
-                <td class="text-end">${openQ.toLocaleString()}</td>
-                <td>${tx.date}</td>
-                <td>${tx.voucher}</td>
-                <td class="text-success text-end fw-bold">${inQ || 0}</td>
-                <td class="text-danger text-end fw-bold">${outQ || 0}</td>
-                <td class="text-end fw-bold">${runningQty.toLocaleString()}</td>
-                <td class="text-end text-success fw-bold">SAR ${runningAmt.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-                <td class="text-end">SAR ${currentAvg.toFixed(2)}</td>
-                <td>${tx.station || tx.costCentre || '-'} / ${tx.remarks || ''}</td>
-              </tr>
-            `;
-          });
-        }
       });
-    }
+    };
 
-    function submitTransaction(e) {
+    window.renderLowestInventoryTable = function() {
+      const tbody = document.getElementById('lowestInventoryTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let items = inventoryCatalog.map(item => {
+        const stats = getItemStats(item.code, 'ALL');
+        const velocity = stats.outQty / Math.max(stats.closingQty, 0.01);
+        return { code: item.code, descEn: item.descEn, closingQty: stats.closingQty, outQty: stats.outQty, velocity };
+      }).sort((a,b) => a.closingQty - b.closingQty);
+
+      let sn = 1;
+      items.forEach(i => {
+        let badge = i.closingQty <= 50 ? '<span class="badge bg-danger">Critical</span>' : '<span class="badge bg-success">Normal</span>';
+        tbody.innerHTML += `
+          <tr>
+            <td class="text-center">${sn++}</td>
+            <td class="text-center fw-bold">${i.code}</td>
+            <td>${i.descEn}</td>
+            <td class="text-end text-danger fw-bold">${i.closingQty.toLocaleString()}</td>
+            <td class="text-end text-success">${i.outQty.toLocaleString()}</td>
+            <td class="text-end">${i.velocity.toFixed(2)}x</td>
+            <td class="text-center">${badge}</td>
+            <td class="text-center"><button class="btn btn-sm btn-outline-primary py-0" onclick="addLabelToStudio('${i.code}')">🏷️ Studio</button></td>
+          </tr>
+        `;
+      });
+    };
+
+    window.addLabelToStudio = function(code) {
+      studioItemCodes.add(code);
+      renderLabelsGrid();
+      showToast(`Added item ${code} to Barcode Studio!`);
+    };
+
+    window.clearStudioLabels = function() {
+      studioItemCodes.clear();
+      renderLabelsGrid();
+      showToast("Cleared Barcode Studio", "warning");
+    };
+
+    window.renderLabelsGrid = function() {
+      const grid = document.getElementById('labelsGridContainer');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      if (studioItemCodes.size === 0) {
+        grid.innerHTML = `<div class="text-center p-5 text-muted w-100"><h5>Label Studio is Empty</h5><p>Click '+ Studio' on any inventory item in Index or Lowest Stock to generate its live barcode & QR tag here.</p></div>`;
+        return;
+      }
+
+      const labelLang = document.getElementById('barcodeLangSelect')?.value || 'en';
+
+      studioItemCodes.forEach(code => {
+        const item = inventoryCatalog.find(i => i.code === code);
+        if (!item) return;
+        const displayName = labelLang === 'ar' ? (item.descAr || item.descEn) : (item.descEn || item.descAr);
+
+        const card = document.createElement('div');
+        card.className = 'sticker-card';
+        card.innerHTML = `
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="badge bg-primary" style="font-size:0.6rem;">AL NOOR FUEL EST</span>
+            <button class="btn btn-sm btn-outline-danger py-0 px-1" style="font-size:0.6rem;" onclick="studioItemCodes.delete('${code}'); renderLabelsGrid();">✕</button>
+          </div>
+          <div style="font-size: 0.75rem; font-weight:700; margin-bottom:4px; line-height:1.2;">${displayName}</div>
+          <div class="meta-box">
+            <div><label>CODE</label><span>${item.code}</span></div>
+            <div><label>WAREHOUSE</label><span>Main WH</span></div>
+            <div><label>UNIT</label><span>Pcs</span></div>
+          </div>
+          <div class="d-flex align-items-center justify-content-between mt-1 pt-1 border-top">
+            <svg id="barcode-${item.code}" style="height:28px; max-width:130px;"></svg>
+            <div id="qrcode-${item.code}"></div>
+          </div>
+        `;
+        grid.appendChild(card);
+
+        try {
+          JsBarcode(`#barcode-${item.code}`, item.code, { format: "CODE128", height: 26, displayValue: true, fontSize: 8, margin: 0 });
+        } catch(e) {}
+
+        try {
+          const qr = qrcode(0, 'M');
+          qr.addData(`Code: ${item.code} | Name: ${displayName}`);
+          qr.make();
+          document.getElementById(`qrcode-${item.code}`).innerHTML = qr.createSvgTag({ scalable: true, margin: 0 });
+          const svgEl = document.querySelector(`#qrcode-${item.code} svg`);
+          if (svgEl) { svgEl.style.width = '30px'; svgEl.style.height = '30px'; }
+        } catch(e) {}
+      });
+    };
+
+    window.addNewItem = async function(e) {
+      e.preventDefault();
+      const code = document.getElementById('newCode').value.trim();
+      const descEn = document.getElementById('newDescEn').value.trim() || ("Item " + code);
+      const descAr = document.getElementById('newDescAr').value.trim() || ("صنف " + code);
+      const openQty = parseFloat(document.getElementById('newOpenQty').value) || 0;
+      const openAmt = parseFloat(document.getElementById('newOpenAmt').value) || 0;
+      const openDate = document.getElementById('newOpenDate').value;
+
+      try {
+        await setDoc(doc(db, "inventoryCatalog", code), { code, descEn, descAr, openQty, openAmt, openDate });
+        bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
+        document.getElementById('newItemForm').reset();
+        showToast("Item saved to live cloud database!");
+      } catch(err) {
+        console.error(err);
+        alert("Failed to save item to cloud.");
+      }
+    };
+
+    window.deleteCatalogItem = async function(code) {
+      if (currentUser?.role !== 'admin') { alert("Admin access required."); return; }
+      if (confirm(`Delete item ${code} from cloud?`)) {
+        await deleteDoc(doc(db, "inventoryCatalog", code));
+        showToast("Item deleted from cloud.", "warning");
+      }
+    };
+
+    window.submitTransaction = async function(e) {
       e.preventDefault();
       const code = document.getElementById('txItemCode').value.trim();
       const voucher = document.getElementById('txVoucher').value.trim();
       const type = document.getElementById('txType').value;
       const qty = parseFloat(document.getElementById('txQty').value) || 0;
       const invoiceAmt = parseFloat(document.getElementById('txInvoiceAmt').value) || 0;
-      const costCentre = document.getElementById('txCostCentre').value.trim();
-      const station = document.getElementById('txStation').value.trim();
+      const date = document.getElementById('txDateInput').value;
       const remarks = document.getElementById('txRemarks').value.trim();
-      const dateStr = document.getElementById('txDateInput').value;
+      const id = "tx_" + Date.now();
 
-      const found = inventoryCatalog.find(i => i.code === code);
-      if (!found) {
-        alert("Error: Inventory item does not exist in the catalog.");
-        return;
-      }
-
-      const newTx = {
-        id: Date.now(),
-        code: code,
-        date: dateStr,
-        voucher: voucher,
-        inQty: (type === 'INBOUND' || type === 'RETURN') ? qty : 0,
+      const txData = {
+        id, code, voucher, date, remarks,
+        inQty: type === 'INBOUND' || type === 'RETURN' ? qty : 0,
         outQty: type === 'OUTGOING' ? qty : 0,
-        invoiceAmt: type === 'INBOUND' ? invoiceAmt : 0,
-        costCentre: costCentre,
-        station: station,
-        remarks: remarks
+        invoiceAmt: type === 'INBOUND' ? invoiceAmt : 0
       };
-      transactions.push(newTx);
-      renderAll();
-      document.getElementById('txForm').reset();
-      setupDateRestrictions();
-      showToast("Transaction successfully recorded!");
-    }
 
-    // Barcode Studio & Label Rendering
-    function renderLabelsGrid() {
-      const grid = document.getElementById('labelsGridContainer');
-      if (!grid) return;
-      grid.innerHTML = '';
-
-      if (studioItemCodes.size === 0) {
-        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
-          <h3>Label Studio is Empty</h3>
-          <p>Click on (+ Generate) beside any item in the inventory register to display its barcode label here.</p>
-        </div>`;
-        return;
+      try {
+        await setDoc(doc(db, "warehouseTransactions", id), txData);
+        document.getElementById('txForm').reset();
+        setupDateRestrictions();
+        showToast("Transaction successfully posted to cloud!");
+      } catch(err) {
+        console.error(err);
+        alert("Failed to post transaction.");
       }
+    };
 
-      const labelLang = document.getElementById('barcodeLangSelect').value;
-
-      studioItemCodes.forEach(code => {
-        const item = inventoryCatalog.find(i => i.code === code);
-        if (!item) return;
-
-        const isSelected = selectedStudioCodes.has(code);
-        const card = document.createElement('div');
-        card.className = `sticker-card ${!isSelected ? 'unselected-print' : ''}`;
-
-        const displayName = labelLang === 'ar' ? (item.descAr || item.descEn) : (item.descEn || item.descAr);
-
-        card.innerHTML = `
-          <div class="sticker-header">
-            <div style="display: flex; align-items: center; gap: 4px;">
-              <input type="checkbox" class="studio-label-checkbox" value="${item.code}" ${isSelected ? 'checked' : ''} onchange="handleStudioCheckbox(this, '${item.code}')">
-              <span style="font-size:0.6rem; color:#64748b;">Al Noor Fuel Est</span>
-            </div>
-            <button class="del-btn" onclick="toggleStudioLabel('${item.code}')">✕</button>
-          </div>
-          <div class="sticker-title">${displayName}</div>
-          <div class="meta-box">
-            <div><label>Code</label><span>${item.code}</span></div>
-            <div><label>Unit</label><span>${item.unit || 'Pcs'}</span></div>
-            <div><label>Class</label><span>${item.classification || 'General'}</span></div>
-          </div>
-          ${item.customData ? `<div class="custom-link-badge">📌 ${item.customData}</div>` : ''}
-          <div class="codes-flex-container">
-            <div class="barcode-section">
-              <svg id="barcode-${item.code}"></svg>
-            </div>
-            <div class="qrcode-section">
-              <div id="qrcode-${item.code}"></div>
-              <span class="qrcode-label">QR</span>
-            </div>
-          </div>
-        `;
-        grid.appendChild(card);
-
-        try {
-          JsBarcode(`#barcode-${item.code}`, item.code, { format: "CODE128", height: 28, displayValue: true, fontSize: 8, margin: 1 });
-        } catch (e) {}
-
-        try {
-          const qrPayload = `Code: ${item.code} | Name: ${displayName} | Unit: ${item.unit}`;
-          const qr = qrcode(0, 'M');
-          qr.addData(qrPayload);
-          qr.make();
-          document.getElementById(`qrcode-${item.code}`).innerHTML = qr.createSvgTag({ scalable: true, margin: 0 });
-        } catch (e) {}
-      });
-    }
-
-    function handleStudioCheckbox(cb, code) {
-      if (cb.checked) selectedStudioCodes.add(code);
-      else selectedStudioCodes.delete(code);
-    }
-
-    function toggleSelectAllStudioLabels(masterCb) {
-      const cbs = document.querySelectorAll('.studio-label-checkbox');
-      cbs.forEach(cb => {
-        cb.checked = masterCb.checked;
-        if (masterCb.checked) selectedStudioCodes.add(cb.value);
-        else selectedStudioCodes.delete(cb.value);
-      });
-    }
-
-    function clearLabelStudio() {
-      studioItemCodes.clear();
-      selectedStudioCodes.clear();
-      renderLabelsGrid();
-      renderOpeningBalanceTable();
-      showToast("Barcode Studio cleared", "warning");
-    }
-
-    function triggerCleanPrint() {
-      if (selectedStudioCodes.size === 0) {
-        alert("Please select at least one label from the studio to print.");
-        return;
+    window.deleteTransaction = async function(id) {
+      if (confirm("Delete this transaction entry?")) {
+        await deleteDoc(doc(db, "warehouseTransactions", id));
+        showToast("Transaction deleted.", "warning");
       }
-      window.print();
-    }
+    };
 
-    // Analytics Charts
-    function renderContributionChart() {
-      const ctx = document.getElementById('contributionChart').getContext('2d');
-      const rankedItems = [...inventoryCatalog].map(item => {
-        const stats = getItemStats(item.code, 'ALL');
-        const totalIn = stats.openQty + stats.inQty;
-        const ratio = totalIn > 0 ? ((stats.outQty / totalIn) * 100).toFixed(1) : 0;
-        const displayName = currentLang === 'ar' ? (item.descAr || item.descEn) : (item.descEn || item.descAr);
-        return { desc: displayName, ratio: parseFloat(ratio) };
-      }).sort((a, b) => b.ratio - a.ratio).slice(0, 20);
+    window.openAddModal = function() {
+      new bootstrap.Modal(document.getElementById('addItemModal')).show();
+    };
 
-      if (contributionChartInstance) contributionChartInstance.destroy();
+    window.exportCloudBackupJSON = function() {
+      const backup = { inventoryCatalog, transactions };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
+      const anchor = document.createElement('a');
+      anchor.href = dataStr;
+      anchor.download = `Al_Noor_Cloud_Backup_${new Date().toISOString().slice(0,10)}.json`;
+      anchor.click();
+      showToast("Cloud backup JSON downloaded!");
+    };
 
-      contributionChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: rankedItems.map(i => i.desc),
-          datasets: [{
-            label: currentLang === 'ar' ? 'نسبة الصادر إلى الوارد (%)' : 'Outgoing vs Total Received (%)',
-            data: rankedItems.map(i => i.ratio),
-            backgroundColor: '#1a365d',
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: { y: { beginAtZero: true, max: 100 } }
-        }
-      });
-    }
-
-    function renderLowestInventoryTable() {
-      const tbody = document.getElementById('lowestInventoryTableBody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-
-      let itemsWithMetrics = inventoryCatalog.map(item => {
-        const stats = getItemStats(item.code, 'ALL');
-        const closing = Math.max(stats.closingQty, 0.01);
-        const velocityScore = stats.outQty / closing;
-        return {
-          code: item.code,
-          descEn: item.descEn,
-          descAr: item.descAr,
-          closingQty: stats.closingQty,
-          outQty: stats.outQty,
-          velocityScore
-        };
-      }).sort((a, b) => a.closingQty - b.closingQty);
-
-      itemsWithMetrics.forEach((item, idx) => {
-        let badge = item.closingQty <= 500 ? '<span class="badge bg-danger">Critical Reorder</span>' : '<span class="badge bg-success">Normal</span>';
-        tbody.innerHTML += `
-          <tr>
-            <td class="text-center fw-bold">${idx + 1}</td>
-            <td class="text-center"><span class="clickable-item" onclick="goToTransactions('${item.code}')">${item.code}</span></td>
-            <td class="fw-semibold">${item.descEn}</td>
-            <td class="fw-semibold">${item.descAr}</td>
-            <td class="text-end fw-bold text-danger">${item.closingQty.toLocaleString()}</td>
-            <td class="text-end fw-bold text-success">${item.outQty.toLocaleString()}</td>
-            <td class="text-end">${item.velocityScore.toFixed(2)}x</td>
-            <td class="text-center">${badge}</td>
-            <td class="text-center"><button class="btn btn-sm btn-outline-primary py-0" onclick="goToTransactions('${item.code}')">+ Inbound</button></td>
-          </tr>
-        `;
-      });
-    }
-
-    // Modal Add Item Handler
-    function addNewItem(e) {
-      e.preventDefault();
-      const code = document.getElementById('newCode').value.trim();
-      let descEn = document.getElementById('newDescEn').value.trim();
-      let descAr = document.getElementById('newDescAr').value.trim();
-      const unit = document.getElementById('newUnit').value.trim();
-      const openQty = parseFloat(document.getElementById('newOpenQty').value) || 0;
-      const openAmt = parseFloat(document.getElementById('newOpenAmt').value) || 0;
-      const openDate = document.getElementById('newOpenDate').value;
-      const classification = document.getElementById('newClassification').value.trim();
-      const customData = document.getElementById('newCustomData').value.trim();
-
-      if (descEn && !descAr) descAr = autoTranslateText(descEn, 'ar');
-      else if (descAr && !descEn) descEn = autoTranslateText(descAr, 'en');
-
-      let existing = inventoryCatalog.find(i => i.code === code);
-      if (!existing) {
-        inventoryCatalog.push({ code, descEn, descAr, unit, openQty, openAmt, openDate, classification, customData });
-      } else {
-        existing.descEn = descEn; existing.descAr = descAr; existing.unit = unit; existing.openQty = openQty; existing.openAmt = openAmt; existing.classification = classification; existing.customData = customData;
-      }
-
-      renderAll();
-      var modalEl = document.getElementById('addItemModal');
-      var modal = bootstrap.Modal.getInstance(modalEl);
-      if (modal) modal.hide();
-      showToast("Inventory item saved successfully!");
-    }
-
-    // Excel & Template Utilities via SheetJS
-    function downloadExcelTemplate() {
-      const templateData = [
-        { "Material Code": "1001", "Arabic Name": "برغى جبس اسود", "English Name": "Black Gypsum Screw", "Unit": "Pieces", "Opening Quantity": 10000, "Opening Amount": 500.00, "Opening Date": "2026-01-01", "Classification": "Hardware" }
-      ];
+    window.downloadUploadTemplate = function() {
+      const templateData = [{ "Item Code": "763225", "Item Description (English)": "Black Gypsum Screw", "Item Description (Arabic)": "برغى جبس اسود", "Opening Balance Quantity": 42000, "Opening Balance Amount": 1207.50, "Opening Date": "2026-01-01" }];
       const worksheet = XLSX.utils.json_to_sheet(templateData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Template");
-      XLSX.writeFile(workbook, "Al_Noor_Inventory_Template.xlsx");
-      showToast("Template downloaded successfully!");
-    }
+      XLSX.writeFile(workbook, "Inventory_Template.xlsx");
+    };
 
-    function downloadAvailableInventoryExcel() {
-      const exportData = inventoryCatalog.map(i => ({
-        "Material Code": i.code,
-        "Arabic Name": i.descAr,
-        "English Name": i.descEn,
-        "Unit": i.unit,
-        "Opening Quantity": i.openQty,
-        "Opening Amount": i.openAmt,
-        "Opening Date": i.openDate,
-        "Classification": i.classification
-      }));
-      const worksheet = XLSX.utils.json_to_sheet(exportData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Inventory");
-      XLSX.writeFile(workbook, `Al_Noor_Inventory_${new Date().toISOString().slice(0,10)}.xlsx`);
-      showToast("Inventory exported successfully!");
-    }
-
-    function importExcelFile(e) {
+    window.processFileUpload = function(e) {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = function(evt) {
+      reader.onload = async function(evt) {
         try {
           const data = new Uint8Array(evt.target.result);
           const workbook = XLSX.read(data, { type: 'array' });
-          const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(sheet);
-          
+          const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+          const batch = writeBatch(db);
           let count = 0;
-          rows.forEach(r => {
-            const code = String(r["Material Code"] || r["Code"] || "").trim();
-            const descAr = String(r["Arabic Name"] || "").trim();
-            const descEn = String(r["English Name"] || descAr).trim();
-            const unit = String(r["Unit"] || "Pieces").trim();
-            const openQty = parseFloat(r["Opening Quantity"] || r["Opening Balance"] || 0);
-            const openAmt = parseFloat(r["Opening Amount"] || 0);
-            const openDate = String(r["Opening Date"] || "2026-01-01").trim();
-            const classification = String(r["Classification"] || "General").trim();
 
-            if (code && (descAr || descEn)) {
-              let existing = inventoryCatalog.find(i => i.code === code);
-              if (!existing) {
-                inventoryCatalog.push({ code, descEn, descAr, unit, openQty, openAmt, openDate, classification, customData: "" });
-              } else {
-                existing.descEn = descEn; existing.descAr = descAr; existing.unit = unit; existing.openQty = openQty; existing.openAmt = openAmt;
-              }
+          rows.forEach(r => {
+            const code = String(r["Item Code"] || "").trim();
+            if (code) {
+              const item = {
+                code,
+                descEn: String(r["Item Description (English)"] || "Item " + code),
+                descAr: String(r["Item Description (Arabic)"] || "صنف " + code),
+                openQty: parseFloat(r["Opening Balance Quantity"]) || 0,
+                openAmt: parseFloat(r["Opening Balance Amount"]) || 0,
+                openDate: String(r["Opening Date"] || "2026-01-01")
+              };
+              batch.set(doc(db, "inventoryCatalog", code), item);
               count++;
             }
           });
-          renderAll();
-          showToast(`Successfully imported ${count} items!`);
-        } catch (err) {
-          alert("Error parsing Excel/CSV file.");
+          await batch.commit();
+          showToast(`Successfully uploaded ${count} items to live cloud!`);
+        } catch(err) {
+          console.error(err);
+          alert("Error parsing file.");
         }
       };
       reader.readAsArrayBuffer(file);
-    }
+    };
 
-    function downloadStockMovementReport() {
-      let csv = "\ufeffSN,Item Code,Item Name (English),Item Name (Arabic),Opening Qty,Opening Amount,Closing Stock,Closing Amount,Average Price\n";
-      inventoryCatalog.forEach((item, idx) => {
-        const stats = getItemStats(item.code, 'ALL');
-        csv += `${idx + 1},${item.code},"${item.descEn}","${item.descAr}",${stats.openQty},${stats.openAmt},${stats.closingQty},${stats.closingAmt.toFixed(2)},${stats.avgPrice.toFixed(2)}\n`;
-      });
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute("download", "Stock_Movement_Summary.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    function downloadStockLedgerReport() {
-      let csv = "\ufeffSN,Item Code,Item Name,Date,Voucher,In Qty,Out Qty,Closing Stock,Closing Amount,Remarks\n";
-      let sn = 1;
-      inventoryCatalog.forEach(item => {
-        const itemTxs = transactions.filter(t => t.code === item.code);
-        let q = item.openQty; let a = item.openAmt;
-        csv += `${sn++},${item.code},"${item.descEn}",${item.openDate || '2026-01-01'},OPENING,0,0,${q},${a.toFixed(2)},"Opening Balance"\n`;
-        itemTxs.forEach(t => {
-          q += (t.inQty || 0) - (t.outQty || 0);
-          a += (t.invoiceAmt || 0);
-          csv += `${sn++},${item.code},"${item.descEn}",${t.date},${t.voucher},${t.inQty},${t.outQty},${q},${a.toFixed(2)},"${t.remarks || ''}"\n`;
-        });
-      });
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute("download", "Stock_Ledger_Detailed.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    function exportBackupJSON() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ inventoryCatalog, transactions }, null, 2));
-      const anchor = document.createElement('a');
-      anchor.setAttribute("href", dataStr);
-      anchor.setAttribute("download", `Al_Noor_Backup_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      showToast("JSON Backup exported successfully!");
+    function toggleMovementFields() {
+      const type = document.getElementById('txType').value;
+      document.getElementById('invoiceAmountContainer').style.display = type === 'INBOUND' ? 'block' : 'none';
     }
   </script>
 </body>
