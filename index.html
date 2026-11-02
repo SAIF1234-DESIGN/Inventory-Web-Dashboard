@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Al Noor United Fuel Est - Central Logistics & Inventory Dashboard</title>
   
-  <!-- Bootstrap CSS for layout components -->
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- External Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -74,7 +74,6 @@
     .meta-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #f8fafc; padding: 4px; border-radius: 4px; margin-bottom: 4px; text-align: center; border: 1px solid #e2e8f0; }
     .meta-box label { font-size: 0.45rem; color: #64748b; display: block; font-weight: 600; }
     .meta-box span { font-size: 0.6rem; font-weight: 700; color: #1e293b; }
-    .custom-link-badge { background: #e0f2fe; color: #0369a1; padding: 2px 4px; border-radius: 4px; font-size: 0.55rem; margin-bottom: 4px; word-break: break-all; }
     .codes-flex-container { display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #cbd5e1; padding-top: 5px; gap: 6px; }
     .barcode-section { flex: 1; text-align: left; }
     .barcode-section svg { width: 100%; max-width: 110px; height: 30px; }
@@ -92,7 +91,6 @@
       @page { size: auto; margin: 15mm; }
     }
   </style>
-  <style id="dynamicPrintStyles"></style>
 </head>
 <body onload="initDashboard()">
 
@@ -160,9 +158,7 @@
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
         <div class="d-flex align-items-center gap-2">
           <label class="fw-bold text-primary mb-0" id="masterMonthLabelText">📅 Active Month:</label>
-          <select id="masterMonthSelect" class="form-select form-select-sm fw-bold border-primary" onchange="onMasterMonthChanged()" style="width: 200px;">
-            <!-- Populated dynamically -->
-          </select>
+          <select id="masterMonthSelect" class="form-select form-select-sm fw-bold border-primary" onchange="onMasterMonthChanged()" style="width: 200px;"></select>
         </div>
         <div class="d-flex gap-2 align-items-center flex-wrap">
           <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display:none;" onchange="importExcelFile(event)">
@@ -306,11 +302,11 @@
               <label class="form-label small fw-semibold">Total Invoice (SAR) *</label>
               <input type="number" step="0.01" id="txInvoiceAmt" class="form-control form-control-sm" placeholder="2500.00">
             </div>
-            <div class="col-md-2" id="costCentreContainer">
+            <div class="col-md-2">
               <label class="form-label small fw-semibold">Cost Centre</label>
               <input type="text" id="txCostCentre" class="form-control form-control-sm" placeholder="Optional">
             </div>
-            <div class="col-md-2" id="stationContainer">
+            <div class="col-md-2">
               <label class="form-label small fw-semibold">Station / Location</label>
               <input type="text" id="txStation" class="form-control form-control-sm" placeholder="Optional">
             </div>
@@ -495,6 +491,9 @@
     </div>
   </div>
 
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
   <!-- FIREBASE & APPLICATION LOGIC SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
@@ -550,14 +549,20 @@
       onSnapshot(collection(db, "inventoryCatalog"), (snapshot) => {
         inventoryCatalog = [];
         snapshot.forEach(docSnap => inventoryCatalog.push(docSnap.data()));
-        document.getElementById('cloudStatusBadge').className = "badge bg-success ms-3";
-        document.getElementById('cloudStatusBadge').innerText = "☁️ Live Cloud Synced";
+        const statusBadge = document.getElementById('cloudStatusBadge');
+        if (statusBadge) {
+          statusBadge.className = "badge bg-success ms-3";
+          statusBadge.innerText = "☁️ Live Cloud Synced";
+        }
         populateDynamicMonths();
         renderAll();
       }, (err) => {
         console.error("Cloud Sync Error:", err);
-        document.getElementById('cloudStatusBadge').className = "badge bg-danger ms-3";
-        document.getElementById('cloudStatusBadge').innerText = "☁️ Cloud Offline";
+        const statusBadge = document.getElementById('cloudStatusBadge');
+        if (statusBadge) {
+          statusBadge.className = "badge bg-danger ms-3";
+          statusBadge.innerText = "☁️ Cloud Offline";
+        }
       });
 
       onSnapshot(collection(db, "warehouseTransactions"), (snapshot) => {
@@ -573,7 +578,8 @@
         currentUser = JSON.parse(saved);
         applyRolePermissions();
       } else {
-        new bootstrap.Modal(document.getElementById('loginModal')).show();
+        const loginEl = document.getElementById('loginModal');
+        if (loginEl) new bootstrap.Modal(loginEl).show();
       }
     }
 
@@ -586,14 +592,20 @@
       if (USERS[email] && USERS[email].pass === pass) {
         currentUser = { email, role: USERS[email].role, name: USERS[email].name };
         sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-        errEl.style.display = 'none';
-        bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+        if (errEl) errEl.style.display = 'none';
+        const modalEl = document.getElementById('loginModal');
+        if (modalEl) {
+          const modalInstance = bootstrap.Modal.getInstance(modalEl);
+          if (modalInstance) modalInstance.hide();
+        }
         applyRolePermissions();
         renderAll();
-        showToast("Logged in successfully!");
+        window.showToast("Logged in successfully!");
       } else {
-        errEl.innerText = "Invalid Email or Password";
-        errEl.style.display = 'block';
+        if (errEl) {
+          errEl.innerText = "Invalid Email or Password";
+          errEl.style.display = 'block';
+        }
       }
     };
 
@@ -604,7 +616,8 @@
 
     function applyRolePermissions() {
       const badge = document.getElementById('userRoleBadge');
-      if (currentUser.role === 'admin') {
+      if (!badge) return;
+      if (currentUser?.role === 'admin') {
         badge.innerText = "Administrator (Admin)";
         badge.className = "badge bg-danger px-3 py-2";
       } else {
@@ -615,8 +628,10 @@
 
     function setupDateRestrictions() {
       const today = new Date().toISOString().split('T')[0];
-      if (document.getElementById('txDateInput')) document.getElementById('txDateInput').value = today;
-      if (document.getElementById('newOpenDate')) document.getElementById('newOpenDate').value = today;
+      const txDate = document.getElementById('txDateInput');
+      const openDate = document.getElementById('newOpenDate');
+      if (txDate) txDate.value = today;
+      if (openDate) openDate.value = today;
     }
 
     function populateDynamicMonths() {
@@ -643,7 +658,8 @@
       currentLang = lang;
       document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
       document.documentElement.setAttribute('lang', lang);
-      document.getElementById('barcodeLangSelect').value = lang;
+      const langSel = document.getElementById('barcodeLangSelect');
+      if (langSel) langSel.value = lang;
       renderAll();
     };
 
@@ -655,8 +671,14 @@
     };
 
     window.onMasterMonthChanged = function() { renderAll(); };
-    window.openAddModal = function() { new bootstrap.Modal(document.getElementById('addItemModal')).show(); };
-    window.openPrintSettingsModal = function() { new bootstrap.Modal(document.getElementById('printSettingsModal')).show(); };
+    window.openAddModal = function() {
+      const modalEl = document.getElementById('addItemModal');
+      if (modalEl) new bootstrap.Modal(modalEl).show();
+    };
+    window.openPrintSettingsModal = function() {
+      const modalEl = document.getElementById('printSettingsModal');
+      if (modalEl) new bootstrap.Modal(modalEl).show();
+    };
 
     function getItemStats(itemCode) {
       const item = inventoryCatalog.find(i => i.code === itemCode);
@@ -677,8 +699,10 @@
         let st = getItemStats(i.code);
         tQty += st.closingQty; tAmt += st.closingAmt;
       });
-      document.getElementById('bannerQty').innerText = tQty.toLocaleString(undefined, {minimumFractionDigits: 2});
-      document.getElementById('bannerAmt').innerText = tAmt.toLocaleString(undefined, {minimumFractionDigits: 2});
+      const qEl = document.getElementById('bannerQty');
+      const aEl = document.getElementById('bannerAmt');
+      if (qEl) qEl.innerText = tQty.toLocaleString(undefined, {minimumFractionDigits: 2});
+      if (aEl) aEl.innerText = tAmt.toLocaleString(undefined, {minimumFractionDigits: 2});
     }
 
     function renderAll() {
@@ -693,11 +717,15 @@
     }
 
     function renderOverviewKPIs() {
-      document.getElementById('kpiTotalItems').textContent = inventoryCatalog.length;
+      const totalItms = document.getElementById('kpiTotalItems');
+      const valEl = document.getElementById('kpiValuation');
+      const catEl = document.getElementById('kpiCategories');
+
+      if (totalItms) totalItms.textContent = inventoryCatalog.length;
       let val = 0;
       inventoryCatalog.forEach(i => val += getItemStats(i.code).closingAmt);
-      document.getElementById('kpiValuation').textContent = `SAR ${val.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-      document.getElementById('kpiCategories').textContent = new Set(inventoryCatalog.map(i => i.classification || "General")).size;
+      if (valEl) valEl.textContent = `SAR ${val.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+      if (catEl) catEl.textContent = new Set(inventoryCatalog.map(i => i.classification || "General")).size;
 
       let counts = {};
       inventoryCatalog.forEach(i => {
@@ -705,7 +733,9 @@
         counts[c] = (counts[c] || 0) + 1;
       });
 
-      let ctx = document.getElementById('overviewCategoryChart').getContext('2d');
+      const chartCanvas = document.getElementById('overviewCategoryChart');
+      if (!chartCanvas) return;
+      let ctx = chartCanvas.getContext('2d');
       if (overviewChartInstance) overviewChartInstance.destroy();
       overviewChartInstance = new Chart(ctx, {
         type: 'bar',
@@ -721,7 +751,8 @@
       const tbody = document.getElementById('openingBalanceTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
-      const search = (document.getElementById('openingSearch').value || '').toLowerCase();
+      const searchInput = document.getElementById('openingSearch');
+      const search = searchInput ? searchInput.value.toLowerCase() : '';
 
       inventoryCatalog.filter(i => i.code.toLowerCase().includes(search) || i.descEn?.toLowerCase().includes(search)).forEach((item, idx) => {
         let isGen = studioItemCodes.has(item.code);
@@ -729,18 +760,18 @@
           <tr>
             <td class="text-center"><input type="checkbox" class="table-checkbox" value="${item.code}" onchange="handleInventoryCheckbox(this)"></td>
             <td class="text-center fw-bold">${idx + 1}</td>
-            <td class="text-center"><span class="clickable-item" onclick="goToTransactions('${item.code}')">${item.code}</span></td>
+            <td class="text-center"><span class="clickable-item" onclick="window.goToTransactions('${item.code}')">${item.code}</span></td>
             <td>${item.descEn || '-'}</td>
             <td>${item.descAr || '-'}</td>
             <td>${item.unit || 'Pieces'}</td>
             <td class="text-end">${parseFloat(item.openQty || 0).toLocaleString()}</td>
             <td class="text-end">SAR ${parseFloat(item.openAmt || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
             <td class="text-center">
-              <button class="btn btn-sm ${isGen ? 'btn-success' : 'btn-outline-primary'} py-0 px-2" onclick="toggleStudioLabel('${item.code}')">
+              <button class="btn btn-sm ${isGen ? 'btn-success' : 'btn-outline-primary'} py-0 px-2" onclick="window.toggleStudioLabel('${item.code}')">
                 ${isGen ? '✓ Generated' : '+ Generate'}
               </button>
             </td>
-            <td class="text-center"><button class="btn btn-sm btn-outline-danger py-0 px-1" onclick="deleteCatalogItem('${item.code}')">✕</button></td>
+            <td class="text-center"><button class="btn btn-sm btn-outline-danger py-0 px-1" onclick="window.deleteCatalogItem('${item.code}')">✕</button></td>
           </tr>
         `;
       });
@@ -761,21 +792,21 @@
       if (studioItemCodes.has(code)) {
         studioItemCodes.delete(code);
         selectedStudioCodes.delete(code);
-        showToast("Removed from Studio", "warning");
+        window.showToast("Removed from Studio", "warning");
       } else {
         studioItemCodes.add(code);
         selectedStudioCodes.add(code);
-        showToast("Added to Studio!");
+        window.showToast("Added to Studio!");
       }
-      renderOpeningBalanceTable();
-      renderLabelsGrid();
+      window.renderOpeningBalanceTable();
+      window.renderLabelsGrid();
     };
 
     window.deleteCatalogItem = async function(code) {
       if (currentUser?.role !== 'admin') { alert("Admin access required."); return; }
       if (confirm(`Delete item ${code} from cloud?`)) {
         await deleteDoc(doc(db, "inventoryCatalog", code));
-        showToast("Item deleted from cloud", "warning");
+        window.showToast("Item deleted from cloud", "warning");
       }
     };
 
@@ -788,31 +819,36 @@
 
     window.goToTransactions = function(code) {
       currentTxFilterCode = code;
-      document.querySelector('#tx-tab').click();
-      document.getElementById('txItemCode').value = code;
-      renderTransactionTable();
+      const tabBtn = document.querySelector('#tx-tab');
+      if (tabBtn) tabBtn.click();
+      const codeInput = document.getElementById('txItemCode');
+      if (codeInput) codeInput.value = code;
+      window.renderTransactionTable();
     };
 
     window.resetTxFilter = function() {
       currentTxFilterCode = null;
-      document.getElementById('txSearchInput').value = "";
-      document.getElementById('txItemCode').value = "";
-      renderTransactionTable();
+      const sInput = document.getElementById('txSearchInput');
+      const cInput = document.getElementById('txItemCode');
+      if (sInput) sInput.value = "";
+      if (cInput) cInput.value = "";
+      window.renderTransactionTable();
     };
 
     window.filterTransactionsBySearch = function(val) {
       currentTxFilterCode = val.trim().toLowerCase() || null;
-      renderTransactionTable();
+      window.renderTransactionTable();
     };
 
     window.onItemCodeTyped = function(val) {
       let found = inventoryCatalog.find(i => i.code.toLowerCase() === val.trim().toLowerCase());
-      if (found) { currentTxFilterCode = found.code; renderTransactionTable(); }
+      if (found) { currentTxFilterCode = found.code; window.renderTransactionTable(); }
     };
 
     window.toggleMovementFields = function() {
       let type = document.getElementById('txType').value;
-      document.getElementById('invoiceAmountContainer').style.display = type === 'INBOUND' ? 'block' : 'none';
+      const invContainer = document.getElementById('invoiceAmountContainer');
+      if (invContainer) invContainer.style.display = type === 'INBOUND' ? 'block' : 'none';
     };
 
     window.renderTransactionTable = function() {
@@ -867,7 +903,7 @@
               <td class="text-end">SAR ${runQ > 0 ? (runA / runQ).toFixed(2) : '0.00'}</td>
               <td>
                 ${t.station || t.costCentre || '-'} / ${t.remarks || ''}
-                <button class="btn btn-sm btn-outline-danger py-0 px-1 ms-2" onclick="deleteTransaction('${t.id}')">✕</button>
+                <button class="btn btn-sm btn-outline-danger py-0 px-1 ms-2" onclick="window.deleteTransaction('${t.id}')">✕</button>
               </td>
             </tr>
           `;
@@ -896,15 +932,16 @@
       };
 
       await setDoc(doc(db, "warehouseTransactions", id), tx);
-      document.getElementById('txForm').reset();
+      const formEl = document.getElementById('txForm');
+      if (formEl) formEl.reset();
       setupDateRestrictions();
-      showToast("Transaction successfully posted to cloud!");
+      window.showToast("Transaction successfully posted to cloud!");
     };
 
     window.deleteTransaction = async function(id) {
       if (confirm("Delete this transaction entry?")) {
         await deleteDoc(doc(db, "warehouseTransactions", id));
-        showToast("Transaction deleted", "warning");
+        window.showToast("Transaction deleted", "warning");
       }
     };
 
@@ -917,7 +954,8 @@
         return;
       }
 
-      let lang = document.getElementById('barcodeLangSelect').value;
+      const langSel = document.getElementById('barcodeLangSelect');
+      let lang = langSel ? langSel.value : 'en';
       studioItemCodes.forEach(code => {
         let item = inventoryCatalog.find(i => i.code === code);
         if (!item) return;
@@ -932,7 +970,7 @@
               <input type="checkbox" class="studio-chk" value="${item.code}" ${isSel ? 'checked' : ''} onchange="selectedStudioCodes.${isSel ? 'delete' : 'add'}('${item.code}')">
               <span style="font-size:0.6rem; color:#64748b;">Al Noor Fuel Est</span>
             </div>
-            <button class="del-btn" onclick="toggleStudioLabel('${item.code}')">✕</button>
+            <button class="del-btn" onclick="window.toggleStudioLabel('${item.code}')">✕</button>
           </div>
           <div class="sticker-title">${name}</div>
           <div class="meta-box">
@@ -954,15 +992,23 @@
           let qr = qrcode(0, 'M');
           qr.addData(`Code: ${item.code} | Name: ${name}`);
           qr.make();
-          document.getElementById(`qrcode-${item.code}`).innerHTML = qr.createSvgTag({ scalable: true, margin: 0 });
+          const qrContainer = document.getElementById(`qrcode-${item.code}`);
+          if (qrContainer) qrContainer.innerHTML = qr.createSvgTag({ scalable: true, margin: 0 });
         } catch(e) {}
+      });
+    };
+
+    window.toggleSelectAllStudioLabels = function(master) {
+      document.querySelectorAll('.studio-chk').forEach(cb => {
+        cb.checked = master.checked;
+        if (master.checked) selectedStudioCodes.add(cb.value); else selectedStudioCodes.delete(cb.value);
       });
     };
 
     window.clearLabelStudio = function() {
       studioItemCodes.clear(); selectedStudioCodes.clear();
-      renderLabelsGrid(); renderOpeningBalanceTable();
-      showToast("Studio cleared", "warning");
+      window.renderLabelsGrid(); window.renderOpeningBalanceTable();
+      window.showToast("Studio cleared", "warning");
     };
 
     window.triggerCleanPrint = function() {
@@ -971,7 +1017,9 @@
     };
 
     window.renderContributionChart = function() {
-      let ctx = document.getElementById('contributionChart').getContext('2d');
+      const chartCanvas = document.getElementById('contributionChart');
+      if (!chartCanvas) return;
+      let ctx = chartCanvas.getContext('2d');
       let items = inventoryCatalog.map(i => {
         let st = getItemStats(i.code);
         let tot = st.openQty + st.inQty;
@@ -1012,7 +1060,7 @@
             <td class="text-end text-success">${i.outQty.toLocaleString()}</td>
             <td class="text-end">${i.velocity.toFixed(2)}x</td>
             <td class="text-center">${badge}</td>
-            <td class="text-center"><button class="btn btn-sm btn-outline-primary py-0" onclick="goToTransactions('${i.code}')">+ Inbound</button></td>
+            <td class="text-center"><button class="btn btn-sm btn-outline-primary py-0" onclick="window.goToTransactions('${i.code}')">+ Inbound</button></td>
           </tr>
         `;
       });
@@ -1032,9 +1080,14 @@
         classification: document.getElementById('newClassification').value.trim()
       };
       await setDoc(doc(db, "inventoryCatalog", code), item);
-      bootstrap.Modal.getInstance(document.getElementById('addItemModal')).hide();
-      document.getElementById('newItemForm').reset();
-      showToast("Item saved to cloud database!");
+      const modalEl = document.getElementById('addItemModal');
+      if (modalEl) {
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        if (modalInstance) modalInstance.hide();
+      }
+      const formEl = document.getElementById('newItemForm');
+      if (formEl) formEl.reset();
+      window.showToast("Item saved to cloud database!");
     };
 
     window.downloadExcelTemplate = function() {
@@ -1081,7 +1134,7 @@
           }
         });
         await batch.commit();
-        showToast(`Successfully uploaded ${count} items to cloud!`);
+        window.showToast(`Successfully uploaded ${count} items to cloud!`);
       };
       reader.readAsArrayBuffer(file);
     };
