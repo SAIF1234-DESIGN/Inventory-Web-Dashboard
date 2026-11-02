@@ -1,592 +1,1460 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soie — Intimates, made to feel like yours</title>
-<meta name="description" content="Soie is an intimate apparel studio designing bras, panties and sets for everyday comfort and quiet confidence.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --ivory:#F7F3EF; --ivory-deep:#F1EAE2; --espresso:#2A211C; --espresso-soft:#5A4E47;
-  --rose:#C48793; --rose-deep:#A5677A; --sand:#EFE6DC; --sand-deep:#E3D6C7; --line:#DDD2C7; --max-w:1180px;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--ivory);color:var(--espresso);font-family:'Sora',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:'Fraunces',serif;font-weight:500;line-height:1.08;margin:0;letter-spacing:-0.01em}
-p{margin:0}
-a{color:inherit;text-decoration:none}
-a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--rose-deep);outline-offset:3px}
-[hidden]{display:none!important}
-.wrap{max-width:var(--max-w);margin:0 auto;padding:0 32px}
-.muted{color:var(--espresso-soft)}
-.eyebrow{font-family:'Fraunces',serif;font-style:italic;color:var(--rose-deep);font-size:.95rem;margin-bottom:12px}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al Noor United Fuel Est - Central Logistics & Inventory Dashboard</title>
+  
+  <!-- Bootstrap CSS for layout components -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- External Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-/* Header */
-.utility-bar{border-bottom:1px solid var(--line);background:var(--ivory-deep)}
-.utility-bar .wrap{display:flex;justify-content:flex-end;gap:28px;padding-top:10px;padding-bottom:10px;font-size:.78rem;letter-spacing:.03em;color:var(--espresso-soft)}
-.utility-bar a:hover{color:var(--rose-deep)}
-.main-header .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:22px;padding-bottom:22px}
-.logo{font-family:'Fraunces',serif;font-style:italic;font-size:1.6rem;font-weight:500;letter-spacing:.02em}
-.primary-nav{display:flex;gap:36px;font-size:.92rem}
-.primary-nav a{position:relative;padding-bottom:4px}
-.primary-nav a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--rose-deep);transition:width .2s ease}
-.primary-nav a:hover::after,.primary-nav a.active::after{width:100%}
-.nav-toggle{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--espresso)}
+  <style>
+    :root {
+      --bg-dark: #f8fafc;
+      --bg-card: #ffffff;
+      --accent-blue: #1a365d;
+      --accent-cyan: #0891b2;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+    }
 
-/* Placeholder imagery */
-.swatch{position:relative;overflow:hidden;border-radius:2px;background:linear-gradient(145deg,var(--sand) 0%,var(--rose) 130%)}
-.swatch::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 25% 20%,rgba(255,255,255,.35),transparent 55%),radial-gradient(circle at 80% 85%,rgba(42,33,28,.12),transparent 60%)}
-.swatch.tone-2{background:linear-gradient(155deg,var(--ivory-deep) 0%,var(--sand-deep) 60%,var(--rose) 140%)}
-.swatch.tone-3{background:linear-gradient(160deg,var(--rose) 0%,var(--espresso-soft) 160%)}
-.swatch.tone-4{background:linear-gradient(140deg,var(--sand-deep) 0%,var(--rose-deep) 150%)}
-.swatch-label{position:absolute;bottom:14px;left:16px;font-size:.72rem;letter-spacing:.04em;color:rgba(255,255,255,.9);font-style:italic;font-family:'Fraunces',serif}
-.r-34{aspect-ratio:3/4}.r-45{aspect-ratio:4/5}.r-1610{aspect-ratio:16/10}
+    * { box-sizing: border-box; }
+    body { background-color: var(--bg-dark); color: var(--text-main); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; padding-bottom: 40px; overflow-x: hidden; }
 
-/* Buttons */
-.btn{display:inline-block;padding:13px 30px;border-radius:2px;font-family:'Sora',sans-serif;font-size:.88rem;letter-spacing:.02em;cursor:pointer;transition:background .18s ease,color .18s ease,border-color .18s ease;border:1px solid var(--espresso)}
-.btn-dark{background:var(--espresso);color:var(--ivory)}
-.btn-dark:hover{background:var(--rose-deep);border-color:var(--rose-deep)}
-.btn-outline{background:transparent;color:var(--espresso)}
-.btn-outline:hover{background:var(--espresso);color:var(--ivory)}
-.link-u{border-bottom:1px solid var(--espresso);font-size:.9rem}
+    /* Toast Notifications */
+    #toastContainer {
+      position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 8px;
+    }
+    .toast-msg {
+      background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-left: 4px solid var(--accent-blue); animation: fadeInOut 1.5s ease forwards;
+    }
+    .toast-msg.success { border-left-color: var(--success); }
+    .toast-msg.warning { border-left-color: var(--warning); }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(10px); }
+      15% { opacity: 1; transform: translateY(0); }
+      85% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
 
-/* Layout helpers */
-.page-hero{padding:64px 0 48px;border-bottom:1px solid var(--line)}
-.page-hero h1{font-size:clamp(2rem,4vw,2.8rem)}
-.page-hero .lead{max-width:46ch;color:var(--espresso-soft);margin-top:14px}
-.section{padding:72px 0}
-.band{background:var(--sand)}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-.two-col.top{align-items:start}
-.center{text-align:center}
-.narrow{max-width:520px;margin:0 auto}
+    /* Top Summary Banner */
+    .top-banner {
+      background: #ffeb3b; color: #000; font-weight: bold; padding: 10px 16px; text-align: center; font-size: 0.95rem; border-bottom: 2px solid #ddd;
+    }
 
-/* Home */
-.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;padding:64px 32px 72px}
-.hero-grid h1{font-size:clamp(2.4rem,5vw,3.6rem)}
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.cat-grid p{font-size:.95rem;margin-top:12px}
-.quote{font-size:clamp(1.7rem,3vw,2.3rem);font-style:italic}
+    /* Navigation & Tabs */
+    .nav-pills .nav-link.active { background-color: #1a365d; font-weight: bold; }
+    .nav-pills .nav-link { color: #1a365d; font-weight: 600; border: 1px solid #cbd5e1; margin-right: 5px; margin-bottom: 5px; }
 
-/* Shop */
-.filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
-.filter-pill{border:1px solid var(--line);background:transparent;padding:9px 18px;border-radius:20px;font-family:'Sora',sans-serif;font-size:.85rem;cursor:pointer;color:var(--espresso);transition:all .15s ease}
-.filter-pill:hover{border-color:var(--rose-deep)}
-.filter-pill.active{background:var(--espresso);color:var(--ivory);border-color:var(--espresso)}
-.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px 24px;padding:48px 0 24px}
-.product-media{position:relative}
-.product-media img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:2px;display:block}
-.badge{position:absolute;top:10px;left:10px;font-size:.7rem;padding:4px 10px;border-radius:12px;color:var(--ivory)}
-.badge.sold{background:var(--espresso)}.badge.low{background:var(--rose-deep)}
-.product-name{font-size:.98rem;margin-top:14px}
-.product-price{color:var(--espresso-soft);font-size:.9rem;margin-top:4px}
-.product-sizes{font-size:.78rem;color:var(--espresso-soft);margin-top:4px}
-.product-desc{font-size:.82rem;color:var(--espresso-soft);margin-top:6px}
-.product-card.out{opacity:.55}
+    .table thead th {
+      background-color: #1a365d !important; color: #fff !important; font-size: 0.8rem; border: 1px solid #2a4365; text-align: center; vertical-align: middle;
+    }
+    .table td { font-size: 0.85rem; vertical-align: middle; }
+    .clickable-item { color: #0d6efd; cursor: pointer; text-decoration: underline; font-weight: bold; }
 
-/* Info pages */
-table{width:100%;border-collapse:collapse;margin-top:24px;font-size:.92rem}
-th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}
-th{font-family:'Fraunces',serif;font-weight:500;color:var(--espresso-soft);font-size:.85rem}
-.table-scroll{overflow-x:auto}
-.step{display:flex;align-items:flex-start;margin-bottom:22px}
-.step-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--sand);font-family:'Fraunces',serif;font-style:italic;margin-right:12px;flex-shrink:0}
-.faq-item{border-bottom:1px solid var(--line);padding:22px 0}
-.faq-item:first-of-type{padding-top:0}
-.faq-item h3{font-size:1.05rem;font-weight:500;font-family:'Sora',sans-serif}
-.faq-item p{color:var(--espresso-soft);margin-top:10px;font-size:.95rem}
-.values{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
-.values h3{font-size:1.1rem;font-style:italic}
-.values p{color:var(--espresso-soft);margin-top:10px;font-size:.95rem}
+    /* Barcode Labels Studio Cards Grid */
+    .labels-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .sticker-card {
+      background: white; color: #0f172a; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 125px; border: 1px solid #cbd5e1;
+    }
+    .sticker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+    .del-btn { background: #fee2e2; color: #dc2626; border: none; border-radius: 6px; width: 20px; height: 20px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; }
+    .sticker-title { font-size: 0.75rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; line-height: 1.2; }
+    .meta-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #f8fafc; padding: 4px; border-radius: 4px; margin-bottom: 4px; text-align: center; border: 1px solid #e2e8f0; }
+    .meta-box label { font-size: 0.45rem; color: #64748b; display: block; font-weight: 600; }
+    .meta-box span { font-size: 0.6rem; font-weight: 700; color: #1e293b; }
+    .custom-link-badge { background: #e0f2fe; color: #0369a1; padding: 2px 4px; border-radius: 4px; font-size: 0.55rem; margin-bottom: 4px; word-break: break-all; }
+    .codes-flex-container { display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #cbd5e1; padding-top: 5px; gap: 6px; }
+    .barcode-section { flex: 1; text-align: left; }
+    .barcode-section svg { width: 100%; max-width: 110px; height: 30px; }
+    .qrcode-section { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 32px; }
+    .qrcode-section svg { width: 32px !important; height: 32px !important; }
+    .qrcode-label { font-size: 0.4rem; color: #64748b; margin-top: 1px; font-weight: 600; }
 
-/* Contact form */
-.contact-form{display:flex;flex-direction:column;gap:18px;max-width:520px}
-.contact-form label{font-size:.85rem;color:var(--espresso-soft);margin-bottom:6px;display:block}
-.contact-form input,.contact-form textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:2px;font-family:'Sora',sans-serif;font-size:.95rem;background:var(--ivory);color:var(--espresso)}
-.contact-form textarea{resize:vertical;min-height:120px}
-.form-note{font-size:.85rem;min-height:1.2em;color:var(--rose-deep)}
-
-/* Footer */
-footer{border-top:1px solid var(--line);margin-top:96px;background:var(--ivory-deep)}
-.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px;padding:56px 0 32px}
-.footer-grid h4{font-size:.82rem;letter-spacing:.03em;margin:0 0 16px;color:var(--espresso-soft);font-weight:500}
-.footer-grid ul{list-style:none;margin:0;padding:0}
-.footer-grid li{margin-bottom:10px;font-size:.92rem}
-.footer-grid a:hover{color:var(--rose-deep)}
-.footer-logo{font-family:'Fraunces',serif;font-style:italic;font-size:1.5rem;margin-bottom:12px}
-.footer-note{color:var(--espresso-soft);font-size:.88rem;max-width:34ch}
-.footer-bottom{border-top:1px solid var(--line);padding:18px 0 28px;font-size:.78rem;color:var(--espresso-soft);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
-
-/* Mobile */
-@media (max-width:780px){
-  .primary-nav{position:fixed;inset:0 0 0 30%;background:var(--ivory);flex-direction:column;padding:100px 32px;gap:26px;font-size:1.15rem;transform:translateX(100%);transition:transform .25s ease;z-index:20;box-shadow:-12px 0 30px rgba(42,33,28,.08)}
-  .primary-nav.open{transform:translateX(0)}
-  .nav-toggle{display:block;z-index:21}
-  .utility-bar .wrap{justify-content:center;flex-wrap:wrap;gap:14px 22px}
-  .wrap{padding:0 20px}
-  .hero-grid,.two-col{grid-template-columns:1fr;gap:32px}
-  .hero-grid{padding:40px 20px 56px}
-  .cat-grid{grid-template-columns:repeat(2,1fr)}
-  .product-grid{grid-template-columns:repeat(2,1fr)}
-  .values{grid-template-columns:1fr}
-  .footer-grid{grid-template-columns:1fr 1fr}
-  .section{padding:56px 0}
-}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-</style>
+    @media print {
+      body * { visibility: hidden; }
+      #tab-labels, #tab-labels * { visibility: visible; }
+      #tab-labels { position: absolute; left: 0; top: 0; width: 100%; }
+      .labels-controls-bar, header, .nav-pills, .top-banner, .modal-overlay { display: none !important; }
+      .sticker-card.unselected-print { display: none !important; }
+      .labels-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+      @page { size: auto; margin: 15mm; }
+    }
+  </style>
+  <style id="dynamicPrintStyles"></style>
 </head>
-<body>
+<body onload="initDashboard()">
 
-<div class="utility-bar">
-  <div class="wrap">
-    <a href="#home">Home</a>
-    <a href="#shop">Shop All</a>
-    <a href="#size-guide">Size Guide</a>
-    <a href="#shipping-returns">Shipping &amp; Returns</a>
-    <a href="#contact">Contact Us</a>
-  </div>
-</div>
-
-<header class="main-header">
-  <div class="wrap">
-    <a href="#home" class="logo">Soie</a>
-    <nav class="primary-nav" id="primary-nav">
-      <a href="#shop/new-in" data-nav="shop/new-in">New In</a>
-      <a href="#shop/bras" data-nav="shop/bras">Bras</a>
-      <a href="#shop/panties" data-nav="shop/panties">Panties</a>
-      <a href="#shop/sets" data-nav="shop/sets">Sets</a>
-      <a href="#about" data-nav="about">About Us</a>
-    </nav>
-    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
-  </div>
-</header>
-
-<main>
-
-<!-- ===================== HOME ===================== -->
-<section class="view" id="view-home">
-  <div style="border-bottom:1px solid var(--line)">
-    <div class="wrap hero-grid">
-      <div>
-        <p class="eyebrow">Everyday intimates, considered</p>
-        <h1>Made to be forgotten on your skin, remembered in how you feel.</h1>
-        <p class="muted" style="max-width:46ch;margin-top:22px;font-size:1.05rem">Soie designs bras, panties and sets around real bodies: soft-touch fabrics, seams that don’t dig in, and shapes you’ll actually reach for.</p>
-        <div style="display:flex;gap:14px;margin-top:32px;flex-wrap:wrap">
-          <a href="#shop" class="btn btn-dark">Shop All</a>
-          <a href="#size-guide" class="btn btn-outline">Find your size</a>
+  <!-- SYSTEM LOGIN MODAL -->
+  <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-bold">🔐 Al Noor Fuel Est. Authentication / تسجيل الدخول</h5>
+        </div>
+        <div class="modal-body p-4">
+          <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Email / البريد الإلكتروني</label>
+              <input type="email" id="loginEmail" class="form-control" placeholder="kassarsaif@gmail.com or noor@noor.com" required>
+              <small class="text-muted">Admins: kassarsaif@gmail.com | noor@noor.com</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Password / كلمة المرور</label>
+              <input type="password" id="loginPassword" class="form-control" placeholder="Enter password" required>
+            </div>
+            <div id="loginError" class="text-danger small mb-3 fw-bold" style="display:none;"></div>
+            <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Login / دخول</button>
+          </form>
         </div>
       </div>
-      <div class="swatch r-45"><span class="swatch-label">The Everyday Edit</span></div>
     </div>
   </div>
 
-  <div class="section">
-    <div class="wrap">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px;flex-wrap:wrap;gap:12px">
-        <h2 style="font-size:1.9rem">Shop by category</h2>
-        <a href="#shop" class="link-u">View all pieces</a>
-      </div>
-      <div class="cat-grid">
-        <a href="#shop/new-in"><div class="swatch tone-2 r-34"><span class="swatch-label">New In</span></div><p>New In</p></a>
-        <a href="#shop/bras"><div class="swatch r-34"><span class="swatch-label">Bras</span></div><p>Bras</p></a>
-        <a href="#shop/panties"><div class="swatch tone-4 r-34"><span class="swatch-label">Panties</span></div><p>Panties</p></a>
-        <a href="#shop/sets"><div class="swatch tone-3 r-34"><span class="swatch-label">Sets</span></div><p>Sets</p></a>
-      </div>
-    </div>
-  </div>
+  <!-- TOAST NOTIFICATIONS CONTAINER -->
+  <div id="toastContainer"></div>
 
-  <div class="band section" style="padding:80px 0">
-    <div class="wrap center" style="max-width:720px">
-      <h2 class="quote">“We design for the body you actually have on a Tuesday morning, not a campaign shoot.”</h2>
-      <p class="muted" style="margin-top:22px">Every piece is tested through a full day of wear before it makes the shop. That’s the only review that matters to us.</p>
+  <!-- MAIN DASHBOARD SECTION -->
+  <div id="dashboardSection" class="container-fluid py-3 px-4">
+    
+    <!-- Top Summary Banner -->
+    <div id="topBanner" class="top-banner mb-3 rounded shadow-sm">
+      <span id="bannerTitleLabel">Total Closing Stock Quantity</span> (<span id="bannerMonthLabel">April 2026</span>): <span id="bannerQty">0.00</span> &nbsp;|&nbsp; <span id="bannerAmtTitleLabel">Total Closing Amount</span>: SAR <span id="bannerAmt">0.00</span>
     </div>
-  </div>
 
-  <div class="section" style="padding:80px 0 0">
-    <div class="wrap two-col">
-      <div class="swatch tone-2 r-1610"><span class="swatch-label">Fit, sorted</span></div>
+    <!-- Company Header Navbar -->
+    <div class="d-flex justify-content-between align-items-center mb-3 bg-white p-3 rounded shadow-sm flex-wrap gap-2">
       <div>
-        <h2 style="font-size:2rem">Not sure what fits?</h2>
-        <p class="muted" style="margin-top:16px;max-width:42ch">Our size guide walks you through a two-minute measurement so you can order once and keep it. No guesswork, no returns pile-up.</p>
-        <a href="#size-guide" class="btn btn-outline" style="margin-top:24px">Open the size guide</a>
+        <h4 class="fw-bold mb-0 text-primary">مؤسسة النور المتحدة للوقود</h4>
+        <h5 class="fw-bold mb-0 text-dark">Al Noor United Fuel Est - Central Logistics & Barcode Studio</h5>
+        <small class="text-muted"><span class="badge bg-success">● Live Session Active</span> Main Warehouse / Southern Warehouse Central Hub</small>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <!-- Language Switcher -->
+        <div class="d-flex align-items-center gap-1">
+          <label class="fw-bold small mb-0 text-secondary">🌐 Lang:</label>
+          <select id="langSelect" class="form-select form-select-sm fw-bold" onchange="changeLanguage(this.value)" style="width: 115px;">
+            <option value="en" selected>English</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+        <span class="badge bg-secondary px-3 py-2" id="userRoleBadge">Staff Clerk</span>
+        <button class="btn btn-sm btn-outline-danger fw-semibold" onclick="logoutSession()">Logout</button>
+      </div>
+    </div>
+
+    <!-- MASTER MONTH SELECTION & EXCEL / UTILITIES BAR -->
+    <div class="card p-3 mb-3 shadow-sm border-0 bg-white">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <label class="fw-bold text-primary mb-0" id="masterMonthLabelText">📅 Active Month:</label>
+          <select id="masterMonthSelect" class="form-select form-select-sm fw-bold border-primary" onchange="onMasterMonthChanged()" style="width: 200px;">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+          <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display:none;" onchange="importExcelFile(event)">
+          <button class="btn btn-sm btn-success fw-semibold" onclick="document.getElementById('excelFileInput').click()">📊 <span id="importExcelBtnText">Import Excel/CSV</span></button>
+          <button class="btn btn-sm btn-outline-success fw-semibold" onclick="downloadExcelTemplate()">📂 <span id="downloadTemplateBtnText">Download Template</span></button>
+          <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="downloadAvailableInventoryExcel()">📥 <span id="downloadInvExcelText">Export Inventory</span></button>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary fw-semibold dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              📑 <span id="reportsDropdownText">Reports</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item fw-semibold" href="#" onclick="downloadStockMovementReport()">📊 Stock Movement Report</a></li>
+              <li><a class="dropdown-item fw-semibold" href="#" onclick="downloadStockLedgerReport()">📑 Detailed Stock Ledger</a></li>
+              <li><a class="dropdown-item fw-semibold" href="#" onclick="exportBackupJSON()">💾 Save JSON Backup</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEPARATED NAVIGATION TABS -->
+    <ul class="nav nav-pills mb-3" id="dashboardTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#tabOverview" type="button" role="tab" onclick="switchTab('overview')">1. 📊 Overview & KPIs</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="opening-tab" data-bs-toggle="pill" data-bs-target="#tabOpeningBalance" type="button" role="tab" onclick="switchTab('opening')">2. 📦 Opening & Register</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tx-tab" data-bs-toggle="pill" data-bs-target="#tabTransactions" type="button" role="tab" onclick="switchTab('transactions')">3. 📝 Transactions / Item Card</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="labels-tab" data-bs-toggle="pill" data-bs-target="#tabLabels" type="button" role="tab" onclick="switchTab('labels')">4. 🏷️ Barcode & QR Studio</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="analytics-tab" data-bs-toggle="pill" data-bs-target="#tabAnalytics" type="button" role="tab" onclick="switchTab('analytics')">5. 📈 Analytics & Reorder</button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="dashboardTabContent">
+      
+      <!-- TAB 1: OVERVIEW & SUMMARY KPIs -->
+      <div class="tab-pane fade show active" id="tabOverview" role="tabpanel">
+        <div class="row g-3 mb-4">
+          <div class="col-md-3">
+            <div class="card p-3 shadow-sm border-0 bg-white">
+              <h6 class="text-muted fw-semibold">Total Registered Items</h6>
+              <h3 class="fw-bold text-primary mb-0" id="kpiTotalItems">0</h3>
+              <small class="text-success">Active inventory master</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card p-3 shadow-sm border-0 bg-white">
+              <h6 class="text-muted fw-semibold">Closing Stock Valuation</h6>
+              <h3 class="fw-bold text-success mb-0" id="kpiValuation">SAR 0.00</h3>
+              <small class="text-muted">Current period value</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card p-3 shadow-sm border-0 bg-white">
+              <h6 class="text-muted fw-semibold">Approved Classifications</h6>
+              <h3 class="fw-bold text-info mb-0" id="kpiCategories">0</h3>
+              <small class="text-muted">Distinct categories</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card p-3 shadow-sm border-0 bg-white">
+              <h6 class="text-muted fw-semibold">Registered Warehouses</h6>
+              <h3 class="fw-bold text-warning mb-0" id="kpiWarehouses">2</h3>
+              <small class="text-muted">Main & Southern Hubs</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-4 shadow-sm border-0 mb-4 bg-white">
+          <h5 class="fw-bold text-primary mb-3">📊 Classifications Breakdown</h5>
+          <div style="position: relative; height: 350px;">
+            <canvas id="overviewCategoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: OPENING BALANCE & INVENTORY REGISTER -->
+      <div class="tab-pane fade" id="tabOpeningBalance" role="tabpanel">
+        <div class="card p-3 shadow-sm border-0 mb-4 bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h5 class="fw-bold text-primary mb-0">📦 <span id="openingSheetTitleText">Opening Balance & Inventory Register</span> (<span id="openingTabTitleMonth">April 2026</span>)</h5>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+              <input type="text" id="openingSearch" class="form-control form-control-sm" placeholder="🔍 Search inventory code or name..." oninput="renderOpeningBalanceTable()" style="width: 220px;">
+              <button type="button" class="btn btn-sm btn-success fw-semibold text-nowrap" id="addItemTriggerBtn" onclick="openAddModal()">+ Add New Item</button>
+            </div>
+          </div>
+          <div class="table-responsive" style="max-height: 550px; overflow-y: auto;">
+            <table class="table table-bordered table-hover align-middle">
+              <thead>
+                <tr>
+                  <th style="width: 50px;"><input type="checkbox" id="selectAllInv" onchange="toggleSelectAllInventory(this)"></th>
+                  <th style="width: 60px;">SN</th>
+                  <th style="width: 120px;">Item Code</th>
+                  <th>Item Name (English)</th>
+                  <th>Item Name (Arabic)</th>
+                  <th style="width: 100px;">Unit</th>
+                  <th style="width: 140px;">Opening Balance</th>
+                  <th style="width: 140px;">Opening Amount</th>
+                  <th style="width: 110px;">Barcode Gen</th>
+                  <th style="width: 90px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="openingBalanceTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: REAL-TIME TRANSACTIONS / ITEM CARD -->
+      <div class="tab-pane fade" id="tabTransactions" role="tabpanel">
+        <div class="card p-3 shadow-sm border-0 mb-4 bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold text-primary mb-0">📝 Real-Time Transactional Movement (Item Card)</h5>
+            <div class="d-flex gap-2 align-items-center">
+              <button class="btn btn-sm btn-outline-secondary fw-semibold" onclick="resetTxFilter()">Show All Inventory</button>
+              <input type="text" id="txSearchInput" class="form-control form-control-sm" list="inventoryListOptions" placeholder="🔍 Search item code..." oninput="filterTransactionsBySearch(this.value)" style="width: 230px;">
+              <datalist id="inventoryListOptions"></datalist>
+            </div>
+          </div>
+          
+          <!-- Transaction Entry Form -->
+          <form id="txForm" onsubmit="submitTransaction(event)" class="row g-2 mb-3 p-3 bg-light rounded border">
+            <input type="hidden" id="editTxId">
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold">Item Code *</label>
+              <input type="text" id="txItemCode" class="form-control form-control-sm" list="inventoryListOptions" placeholder="Select code" oninput="onItemCodeTyped(this.value)" required>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold">Voucher No. *</label>
+              <input type="text" id="txVoucher" class="form-control form-control-sm" placeholder="V-100" required>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold">Movement Type *</label>
+              <select id="txType" class="form-select form-select-sm" onchange="toggleMovementFields()">
+                <option value="OUTGOING" selected>OUTGOING / صادر</option>
+                <option value="INBOUND">INBOUND / وارد</option>
+                <option value="RETURN">RETURN / مرتجع</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold">Quantity *</label>
+              <input type="number" id="txQty" class="form-control form-control-sm" placeholder="100" required>
+            </div>
+            <div class="col-md-2" id="invoiceAmountContainer" style="display:none;">
+              <label class="form-label small fw-semibold">Total Invoice (SAR) *</label>
+              <input type="number" step="0.01" id="txInvoiceAmt" class="form-control form-control-sm" placeholder="2500.00">
+            </div>
+            <div class="col-md-2" id="costCentreContainer">
+              <label class="form-label small fw-semibold">Cost Centre (مركز تكلفة)</label>
+              <input type="text" id="txCostCentre" class="form-control form-control-sm" placeholder="Optional">
+            </div>
+            <div class="col-md-2" id="stationContainer">
+              <label class="form-label small fw-semibold">Station / Location</label>
+              <input type="text" id="txStation" class="form-control form-control-sm" placeholder="Optional">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label small fw-semibold">Date (YYYY-MM-DD)</label>
+              <input type="date" id="txDateInput" class="form-control form-control-sm" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Remarks (ملاحظات)</label>
+              <input type="text" id="txRemarks" class="form-control form-control-sm" placeholder="Optional notes">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button type="submit" id="txSubmitBtn" class="btn btn-primary btn-sm w-100 fw-bold">Post Entry Row</button>
+            </div>
+          </form>
+
+          <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-bordered table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>SN</th>
+                  <th>Item Code</th>
+                  <th>Item Name (English)</th>
+                  <th>Opening Bal</th>
+                  <th>Date</th>
+                  <th>Voucher</th>
+                  <th>Incoming Qty</th>
+                  <th>Outgoing Qty</th>
+                  <th>Closing Stock</th>
+                  <th>Closing Amount</th>
+                  <th>Average Price</th>
+                  <th>Actions / Remarks</th>
+                </tr>
+              </thead>
+              <tbody id="transactionTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: BARCODE & QR STUDIO -->
+      <div class="tab-pane fade" id="tabLabels" role="tabpanel">
+        <div class="card p-3 shadow-sm border-0 mb-4 bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+              <input type="text" id="labelsSearch" class="form-control form-control-sm" placeholder="🔍 Search in studio labels..." oninput="renderLabelsGrid()" style="width: 220px;">
+              <select id="labelsCategoryFilter" class="form-select form-select-sm" onchange="renderLabelsGrid()" style="width: 180px;">
+                <option value="">All Classifications</option>
+              </select>
+              <div class="d-flex align-items-center gap-1 bg-light px-2 py-1 rounded border">
+                <label class="small fw-semibold text-secondary mb-0">Label Lang:</label>
+                <select id="barcodeLangSelect" class="form-select form-select-sm border-0 bg-transparent py-0 fw-bold" onchange="renderLabelsGrid()" style="width: 105px;">
+                  <option value="en">English</option>
+                  <option value="ar">العربية</option>
+                </select>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <input type="checkbox" id="selectAllStudioLabels" onchange="toggleSelectAllStudioLabels(this)">
+                <label for="selectAllStudioLabels" class="small fw-semibold text-secondary mb-0 cursor-pointer">Select All Studio Labels</label>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="openPrintSettingsModal()">⚙️ Page & Label Size</button>
+              <button class="btn btn-sm btn-danger fw-semibold" onclick="clearLabelStudio()">🗑️ Clear Studio</button>
+              <button class="btn btn-sm btn-success fw-semibold" onclick="triggerCleanPrint()">🖨️ Print Selected Labels</button>
+            </div>
+          </div>
+          
+          <div class="labels-grid" id="labelsGridContainer">
+            <!-- Dynamically populated label sticker cards -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: ANALYTICS & REORDER PRIORITY -->
+      <div class="tab-pane fade" id="tabAnalytics" role="tabpanel">
+        <div class="row g-4">
+          <div class="col-md-12">
+            <div class="card p-4 shadow-sm border-0 bg-white">
+              <h5 class="fw-bold text-primary mb-3">📈 Top 20 Outgoing Items Contribution Ratios</h5>
+              <div style="position: relative; height: 380px;">
+                <canvas id="contributionChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="card p-3 shadow-sm border-0 bg-white">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-primary mb-0">🚨 Lowest Stock with Highest Moving Items (Reorder Priority)</h5>
+                <input type="text" id="lowestInvSearch" class="form-control form-control-sm" placeholder="🔍 Filter item..." oninput="renderLowestInventoryTable()" style="width: 220px;">
+              </div>
+              <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+                <table class="table table-bordered table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>SN</th>
+                      <th>Item Code</th>
+                      <th>Item Name (English)</th>
+                      <th>Item Name (Arabic)</th>
+                      <th>Current Closing Stock</th>
+                      <th>Total Outgoing Qty</th>
+                      <th>Turnover / Velocity Score</th>
+                      <th>Priority Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lowestInventoryTableBody">
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ADD / EDIT ITEM MODAL -->
+  <div class="modal fade" id="addItemModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-bold" id="modalHeaderTitle">Add New Inventory Item</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="newItemForm" onsubmit="addNewItem(event)">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Item Code (رمز الصنف) *</label>
+              <input type="text" id="newCode" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Item Name (English) *</label>
+              <input type="text" id="newDescEn" class="form-control" placeholder="Leave blank for auto-translation" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Item Name (Arabic / عربي) *</label>
+              <input type="text" id="newDescAr" class="form-control" placeholder="اتركه فارغاً للترجمة التلقائية" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Unit (الوحدة)</label>
+              <input type="text" id="newUnit" class="form-control" value="Pieces">
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Opening Balance (الرصيد الافتتاحي)</label>
+                <input type="number" id="newOpenQty" class="form-control" value="0" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Opening Amount (المبلغ)</label>
+                <input type="number" step="0.01" id="newOpenAmt" class="form-control" value="0.00" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Opening Date (تاريخ الافتتاح)</label>
+              <input type="date" id="newOpenDate" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Classification (التصنيف)</label>
+              <input type="text" id="newClassification" class="form-control" value="General / عام">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Custom Data / Link (رابط أو ملاحظة)</label>
+              <input type="text" id="newCustomData" class="form-control" placeholder="Optional link or badge">
+            </div>
+            <button type="submit" class="btn btn-success w-100 fw-bold">Save Item</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ===================== SHOP ===================== -->
-<section class="view" id="view-shop" hidden>
-  <div class="page-hero">
-    <div class="wrap">
-      <p class="eyebrow">The full collection</p>
-      <h1>Shop All</h1>
-      <div class="filter-row" id="filter-row">
-        <button class="filter-pill" data-filter="all">All</button>
-        <button class="filter-pill" data-filter="new-in">New In</button>
-        <button class="filter-pill" data-filter="bras">Bras</button>
-        <button class="filter-pill" data-filter="panties">Panties</button>
-        <button class="filter-pill" data-filter="sets">Sets</button>
-      </div>
-      <p class="muted" style="margin-top:20px;font-size:.85rem"><span id="result-count">0 pieces</span> shown</p>
-    </div>
-  </div>
-  <div class="wrap">
-    <div class="product-grid" id="product-grid"><p class="muted" style="grid-column:1/-1">Loading products…</p></div>
-  </div>
-</section>
-
-<!-- ===================== ABOUT ===================== -->
-<section class="view" id="view-about" hidden>
-  <div class="page-hero">
-    <div class="wrap">
-      <p class="eyebrow">Our story</p>
-      <h1>About Soie</h1>
-      <p class="lead">We started Soie because too many “basics” were built for a photo, not a body.</p>
-    </div>
-  </div>
-  <div class="section">
-    <div class="wrap two-col">
-      <div class="swatch tone-2 r-45"><span class="swatch-label">Where it started</span></div>
-      <div>
-        <h2 style="font-size:1.8rem">Comfort first, always.</h2>
-        <p class="muted" style="margin-top:16px">Soie began with a simple frustration: bras that looked good on a hanger and dug in by lunchtime. So we rebuilt the basics from the inside out, with softer bands, tagless finishes, and fabrics chosen for a full day of wear, not a five-minute try-on.</p>
-        <p class="muted" style="margin-top:16px">Every design goes through real wear-testing across a range of bodies before it’s approved. If it’s not something our own team reaches for on a normal Tuesday, it doesn’t make the shop.</p>
+  <!-- PRINT CONFIGURATION MODAL -->
+  <div class="modal fade" id="printSettingsModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-bold">⚙️ Page & Label Size Configurator</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">1. Page Size</label>
+            <select id="cfgPageSize" class="form-select">
+              <option value="A4" selected>A4 Sheet (210mm × 297mm)</option>
+              <option value="Letter">Letter Sheet (8.5" × 11")</option>
+              <option value="Roll4x6">Thermal Roll 4" × 6" (100mm × 150mm)</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">2. Grid Layout Preset</label>
+            <select id="cfgGridPreset" class="form-select">
+              <option value="5_labels_row">5 Labels per row (5 columns)</option>
+              <option value="8_labels" selected>8 Labels per page (2 columns × 4 rows)</option>
+              <option value="12_labels">12 Labels per page (3 columns × 4 rows)</option>
+              <option value="21_labels">21 Labels per page (3 columns × 7 rows)</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">3. Page Orientation</label>
+            <select id="cfgOrientation" class="form-select">
+              <option value="portrait" selected>Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-success w-100 fw-bold" onclick="applyPrintSettingsAndClose()">💾 Save Settings & Apply</button>
+        </div>
       </div>
     </div>
   </div>
-  <div class="band section" style="padding:72px 0">
-    <div class="wrap">
-      <h2 style="font-size:1.8rem;margin-bottom:36px">What we care about</h2>
-      <div class="values">
-        <div><h3>Fabric that lasts</h3><p>We choose finishes that hold their shape wash after wash, not just on day one.</p></div>
-        <div><h3>Fit for real bodies</h3><p>Our size guide and shapes are built from a wide range of measurements, not a single sample size.</p></div>
-        <div><h3>Honest pricing</h3><p>No inflated “sale” prices. What you see is what it costs to make it well.</p></div>
-      </div>
-    </div>
-  </div>
-  <div class="section center">
-    <div class="wrap narrow">
-      <h2 style="font-size:1.7rem">Have a question for us?</h2>
-      <p class="muted" style="margin-top:14px">We read every message ourselves.</p>
-      <a href="#contact" class="btn btn-dark" style="margin-top:22px">Get in touch</a>
-    </div>
-  </div>
-</section>
 
-<!-- ===================== SIZE GUIDE ===================== -->
-<section class="view" id="view-size-guide" hidden>
-  <div class="page-hero">
-    <div class="wrap">
-      <p class="eyebrow">Two minutes, one time</p>
-      <h1>Size Guide</h1>
-      <p class="lead">Measure once with a soft tape measure and you’ll know your size across our whole range.</p>
-    </div>
-  </div>
-  <div class="section" style="padding:56px 0">
-    <div class="wrap two-col top">
-      <div>
-        <h2 style="font-size:1.5rem;margin-bottom:24px">How to measure</h2>
-        <div class="step"><span class="step-num">1</span><p class="muted">Wearing a non-padded bra, wrap the tape snugly around your ribcage, just under the bust. This is your <strong>band measurement</strong>.</p></div>
-        <div class="step"><span class="step-num">2</span><p class="muted">Wrap the tape around the fullest part of your bust, keeping it level. This is your <strong>bust measurement</strong>.</p></div>
-        <div class="step"><span class="step-num">3</span><p class="muted">Subtract band from bust. The difference in inches gives your cup size (1″ = A, 2″ = B, 3″ = C, and so on).</p></div>
-        <div class="step"><span class="step-num">4</span><p class="muted">For panties, measure around the fullest part of your hips and match it to the chart below.</p></div>
-      </div>
-      <div class="swatch tone-4 r-45"><span class="swatch-label">Measuring, made simple</span></div>
-    </div>
-  </div>
-  <div class="band section" style="padding:64px 0">
-    <div class="wrap">
-      <h2 style="font-size:1.5rem">Bra size chart (in)</h2>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Band</th><th>Band size</th><th>A cup (bust)</th><th>B cup (bust)</th><th>C cup (bust)</th><th>D cup (bust)</th></tr></thead>
-          <tbody>
-            <tr><td>28–29″</td><td>32</td><td>33–34″</td><td>34–35″</td><td>35–36″</td><td>36–37″</td></tr>
-            <tr><td>30–31″</td><td>34</td><td>35–36″</td><td>36–37″</td><td>37–38″</td><td>38–39″</td></tr>
-            <tr><td>32–33″</td><td>36</td><td>37–38″</td><td>38–39″</td><td>39–40″</td><td>40–41″</td></tr>
-            <tr><td>34–35″</td><td>38</td><td>39–40″</td><td>40–41″</td><td>41–42″</td><td>42–43″</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <h2 style="font-size:1.5rem;margin-top:48px">Panty size chart (in)</h2>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Size</th><th>Hip measurement</th></tr></thead>
-          <tbody>
-            <tr><td>XS</td><td>34–35″</td></tr>
-            <tr><td>S</td><td>36–37″</td></tr>
-            <tr><td>M</td><td>38–39″</td></tr>
-            <tr><td>L</td><td>40–42″</td></tr>
-            <tr><td>XL</td><td>43–45″</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <div class="section center" style="padding:56px 0 0">
-    <div class="wrap narrow" style="max-width:480px">
-      <h2 style="font-size:1.5rem">Still between sizes?</h2>
-      <p class="muted" style="margin-top:12px">Reach out and we’ll help you find the right fit before you order.</p>
-      <a href="#contact" class="btn btn-outline" style="margin-top:20px">Ask us</a>
-    </div>
-  </div>
-</section>
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- ===================== SHIPPING & RETURNS ===================== -->
-<section class="view" id="view-shipping-returns" hidden>
-  <div class="page-hero">
-    <div class="wrap">
-      <p class="eyebrow">Good to know</p>
-      <h1>Shipping &amp; Returns</h1>
-      <p class="lead">Straightforward policies, no fine print games.</p>
-    </div>
-  </div>
-  <div class="section" style="padding:56px 0">
-    <div class="wrap two-col top">
-      <div>
-        <h2 style="font-size:1.5rem;margin-bottom:20px">Shipping</h2>
-        <div class="faq-item"><h3>Standard shipping: 4–6 business days</h3><p>Free on orders over $60. $5.50 on orders under $60.</p></div>
-        <div class="faq-item"><h3>Express shipping: 1–2 business days</h3><p>$12, calculated at checkout. Order by 1pm for same-day dispatch.</p></div>
-        <div class="faq-item"><h3>Order tracking</h3><p>You’ll get a tracking link by email as soon as your order ships.</p></div>
-      </div>
-      <div>
-        <h2 style="font-size:1.5rem;margin-bottom:20px">Returns &amp; exchanges</h2>
-        <div class="faq-item"><h3>30-day returns</h3><p>Unworn items with tags attached can be returned within 30 days for a full refund.</p></div>
-        <div class="faq-item"><h3>Hygiene note</h3><p>For hygiene reasons, panties can only be returned if the hygiene liner is intact and unremoved.</p></div>
-        <div class="faq-item"><h3>Exchanges</h3><p>Need a different size? Start a return and place a new order. We’ll get the right fit to you faster that way.</p></div>
-        <div class="faq-item"><h3>Refund timing</h3><p>Refunds are issued to your original payment method within 5–7 business days of us receiving your return.</p></div>
-      </div>
-    </div>
-  </div>
-  <div class="band section center" style="padding:56px 0">
-    <div class="wrap narrow" style="max-width:480px">
-      <h2 style="font-size:1.5rem">Need help with an order?</h2>
-      <p class="muted" style="margin-top:12px">Our team can start a return or answer shipping questions directly.</p>
-      <a href="#contact" class="btn btn-dark" style="margin-top:20px">Contact Us</a>
-    </div>
-  </div>
-</section>
+  <script>
+    // Localization Dictionary
+    const translations = {
+      en: {
+        bannerQtyText: "Total Closing Stock Quantity",
+        bannerAmtText: "Total Closing Amount",
+        subHeader: "Main Warehouse / Southern Warehouse Central Hub",
+        staffClerk: "Staff Clerk",
+        masterMonthLabelText: "📅 Active Month:",
+        uploadOpenBtn: "Import Excel/CSV",
+        downloadTemplateBtnText: "Download Template",
+        downloadInvExcelText: "Export Inventory",
+        reportsDropdownText: "Reports",
+        overviewTab: "1. 📊 Overview & KPIs",
+        openingTab: "2. 📦 Opening & Register",
+        txTab: "3. 📝 Transactions / Item Card",
+        labelsTab: "4. 🏷️ Barcode & QR Studio",
+        analyticsTab: "5. 📈 Analytics & Reorder",
+        openingSheetTitleText: "Opening Balance & Inventory Register",
+        addItemBtn: "+ Add New Item",
+        thSn: "SN",
+        thItemCode: "Item Code",
+        thItemDescEn: "Item Name (English)",
+        thItemDescAr: "Item Name (Arabic)",
+        thUnit: "Unit",
+        thOpeningBal: "Opening Balance",
+        thOpeningAmt: "Opening Amount",
+        thMonth: "Month",
+        thActions: "Actions",
+        deleteBtn: "Delete",
+        editBtn: "Edit"
+      },
+      ar: {
+        bannerQtyText: "إجمالي كمية المخزون الختامي",
+        bannerAmtText: "إجمالي المبلغ الختامي",
+        subHeader: "المستودع الرئيسي / مستودع المنطقة الجنوبية",
+        staffClerk: "موظف مبيعات",
+        masterMonthLabelText: "📅 الشهر النشط:",
+        uploadOpenBtn: "استيراد ملف إكسل",
+        downloadTemplateBtnText: "تحميل القالب",
+        downloadInvExcelText: "تصدير المخزون",
+        reportsDropdownText: "التقارير",
+        overviewTab: "1. 📊 نظرة عامة",
+        openingTab: "2. 📦 الرصيد الافتتاحي والسجل",
+        txTab: "3. 📝 حركات المخزون وبطاقة الصنف",
+        labelsTab: "4. 🏷️ استوديو الباركود والـ QR",
+        analyticsTab: "5. 📈 التحليلات وإعادة الطلب",
+        openingSheetTitleText: "جدول الرصيد الافتتاحي وسجل الأصناف",
+        addItemBtn: "+ إضافة صنف جديد",
+        thSn: "الرقم",
+        thItemCode: "رمز الصنف",
+        thItemDescEn: "اسم الصنف (إنجليزي)",
+        thItemDescAr: "اسم الصنف (عربي)",
+        thUnit: "الوحدة",
+        thOpeningBal: "الرصيد الافتتاحي",
+        thOpeningAmt: "المبلغ الافتتاحي",
+        thMonth: "الشهر",
+        thActions: "الإجراءات",
+        deleteBtn: "حذف",
+        editBtn: "تعديل"
+      }
+    };
 
-<!-- ===================== CONTACT ===================== -->
-<section class="view" id="view-contact" hidden>
-  <div class="page-hero">
-    <div class="wrap">
-      <p class="eyebrow">We’d love to hear from you</p>
-      <h1>Contact Us</h1>
-      <p class="lead">Questions about sizing, an order, or just want to say hi? Send it over.</p>
-    </div>
-  </div>
-  <div class="section" style="padding:56px 0">
-    <div class="wrap two-col top">
-      <div>
-        <h2 style="font-size:1.4rem;margin-bottom:20px">Send a message</h2>
-        <form class="contact-form" id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-          <input type="hidden" name="form-name" value="contact">
-          <p style="display:none"><label>Don’t fill this out if you’re human: <input name="bot-field"></label></p>
-          <div><label for="name">Name</label><input type="text" id="name" name="name" required></div>
-          <div><label for="email">Email</label><input type="email" id="email" name="email" required></div>
-          <div><label for="message">Message</label><textarea id="message" name="message" required></textarea></div>
-          <button type="submit" class="btn btn-dark" style="align-self:flex-start">Send message</button>
-          <p class="form-note" id="form-note"></p>
-        </form>
-      </div>
-      <div>
-        <h2 style="font-size:1.4rem;margin-bottom:20px">Other ways to reach us</h2>
-        <p class="muted" style="margin-bottom:8px"><strong>Email</strong></p>
-        <p style="margin-bottom:20px"><a href="mailto:hello@soie-example.com" class="link-u" style="font-size:inherit">hello@soie-example.com</a></p>
-        <p class="muted" style="margin-bottom:8px"><strong>Hours</strong></p>
-        <p style="margin-bottom:20px">Monday–Friday, 9am–5pm</p>
-        <p class="muted" style="margin-bottom:8px"><strong>Response time</strong></p>
-        <p>We typically reply within one business day.</p>
-      </div>
-    </div>
-  </div>
-</section>
+    let currentLang = 'en';
+    let activeTabName = 'overview';
+    let currentUser = null; 
 
-</main>
+    const USERS = {
+      "kassarsaif@gmail.com": { pass: "72724@Whdash", role: "admin", name: "System Admin" },
+      "noor@noor.com": { pass: "Aa123456@", role: "admin", name: "Director Noor" },
+      "clerk@gmail.com": { pass: "Noor@123", role: "clerk", name: "Staff Clerk" }
+    };
 
-<footer>
-  <div class="wrap footer-grid">
-    <div>
-      <div class="footer-logo">Soie</div>
-      <p class="footer-note">Intimate apparel designed around comfort, quiet confidence, and fabrics that hold up to real life.</p>
-    </div>
-    <div>
-      <h4>Shop</h4>
-      <ul>
-        <li><a href="#shop/new-in">New In</a></li>
-        <li><a href="#shop/bras">Bras</a></li>
-        <li><a href="#shop/panties">Panties</a></li>
-        <li><a href="#shop/sets">Sets</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Help</h4>
-      <ul>
-        <li><a href="#size-guide">Size Guide</a></li>
-        <li><a href="#shipping-returns">Shipping &amp; Returns</a></li>
-        <li><a href="#contact">Contact Us</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Company</h4>
-      <ul><li><a href="#about">About Us</a></li></ul>
-    </div>
-  </div>
-  <div class="wrap footer-bottom">
-    <span>&copy; 2026 Soie. All rights reserved.</span>
-    <span>Placeholder site: swap in your brand name and photos anytime. &middot; <a href="/owner.html">Owner login</a></span>
-  </div>
-</footer>
+    const dictionary = {
+      "black gypsum screw": "برغى جبس اسود خشن",
+      "stickers 95 noor khawi": "استيكرات 95 نور خوي",
+      "stickers 91": "استيكرات 91",
+      "sticker diesel": "استيكر ديزل",
+      "letterhead (noor)": "ترويسة خطاب (النور)",
+      "stickers diesel noor khawi": "استيكرات ديزل نور خوي",
+      "cleaning oil": "زيت منظف",
+      "diesel": "ديزل",
+      "petrol": "بنزين",
+      "oil": "زيت",
+      "screw": "برغي",
+      "sticker": "استيكر"
+    };
 
-<script>
-(function () {
-  'use strict';
-
-  /* ---------- Helpers ---------- */
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
-
-  /* ---------- Fallback catalog (used only if products.json can't be loaded) ---------- */
-  var FALLBACK = [
-    { active:true, name:'Cloud Wire-Free Bra', price:'$48', stock:24, categories:['new-in','bras'], sizes:['S','M','L'], description:'A soft-cup, wire-free bra built for full-day wear.', tone:'tone-2' },
-    { active:true, name:'Ribbed Bralette', price:'$38', stock:15, categories:['new-in','bras'], sizes:['XS','S','M'], description:'A ribbed, pullover bralette with light shaping.', tone:'' },
-    { active:true, name:'Seamless Everyday Brief', price:'$18', stock:40, categories:['new-in','panties'], sizes:['XS','S','M','L'], description:'Tagless and seamless for wearing under anything.', tone:'tone-4' },
-    { active:true, name:'Soft-Cup T-Shirt Bra', price:'$44', stock:18, categories:['bras'], sizes:['S','M','L','XL'], description:'A smooth, molded cup that disappears under fitted tops.', tone:'tone-3' },
-    { active:true, name:'Lightly Lined Balconette', price:'$46', stock:9, categories:['bras'], sizes:['S','M','L'], description:'A lifted shape with a lower neckline for open collars.', tone:'tone-2' },
-    { active:true, name:'Cotton Everyday Bra', price:'$36', stock:0, categories:['bras'], sizes:['XS','S','M'], description:'Breathable cotton blend for warm-weather comfort.', tone:'' },
-    { active:true, name:'High-Rise Brief', price:'$16', stock:32, categories:['panties'], sizes:['XS','S','M','L','XL'], description:'Full coverage with a soft, wide waistband.', tone:'tone-4' },
-    { active:true, name:'Cheeky Hipster, 3-Pack', price:'$32', stock:21, categories:['panties'], sizes:['S','M','L'], description:'Three everyday hipsters in rotating core colors.', tone:'tone-3' },
-    { active:true, name:'Lace-Trim Bikini', price:'$19', stock:4, categories:['panties'], sizes:['XS','S','M'], description:'A classic bikini cut finished with a delicate lace edge.', tone:'tone-2' },
-    { active:true, name:'The Everyday Set', price:'$62', stock:12, categories:['sets'], sizes:['S','M','L'], description:'Our soft-cup bra and high-rise brief, matched.', tone:'' },
-    { active:true, name:'Ribbed Bralette + Brief Set', price:'$54', stock:7, categories:['sets'], sizes:['XS','S','M'], description:'Ribbed bralette paired with a matching brief.', tone:'tone-4' },
-    { active:true, name:'Lace Trim Matching Set', price:'$68', stock:3, categories:['sets'], sizes:['S','M','L'], description:'Lace-trimmed bra and brief, sold as a pair.', tone:'tone-3' }
-  ];
-
-  var products = [];
-  var currentFilter = 'all';
-
-  /* ---------- Load products.json (the file the admin panel edits) ---------- */
-  function loadProducts() {
-    return fetch('products.json', { cache: 'no-store' })
-      .then(function (r) { if (!r.ok) throw new Error('bad response'); return r.json(); })
-      .then(function (data) { products = (data.products || []).filter(function (p) { return p.active !== false; }); })
-      .catch(function () { products = FALLBACK; });
-  }
-
-  /* ---------- Render the shop grid ---------- */
-  function renderShop() {
-    var grid = document.getElementById('product-grid');
-    var shown = products.filter(function (p) {
-      return currentFilter === 'all' || (p.categories || []).indexOf(currentFilter) !== -1;
-    });
-
-    document.getElementById('result-count').textContent = shown.length + (shown.length === 1 ? ' piece' : ' pieces');
-    document.querySelectorAll('.filter-pill').forEach(function (b) {
-      b.classList.toggle('active', b.dataset.filter === currentFilter);
-    });
-
-    if (!shown.length) {
-      grid.innerHTML = '<p class="muted" style="grid-column:1/-1">Nothing here yet. Check back soon.</p>';
-      return;
+    function autoTranslateText(text, targetLang) {
+      if (!text) return "";
+      let clean = text.trim().toLowerCase();
+      if (targetLang === 'ar') {
+        if (dictionary[clean]) return dictionary[clean];
+        return text;
+      } else {
+        for (let k in dictionary) {
+          if (dictionary[k] === text.trim()) return k.toUpperCase();
+        }
+        return text;
+      }
     }
 
-    grid.innerHTML = shown.map(function (p) {
-      var stock = typeof p.stock === 'number' ? p.stock : null;
-      var label = (p.categories && p.categories[0]) ? p.categories[0].replace('-', ' ') : '';
-      var visual = p.image
-        ? '<img src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy">'
-        : '<div class="swatch r-34 ' + esc(p.tone || '') + '"><span class="swatch-label">' + esc(label) + '</span></div>';
-      var badge = '';
-      if (stock === 0) badge = '<span class="badge sold">Sold out</span>';
-      else if (stock !== null && stock <= 5) badge = '<span class="badge low">Only ' + stock + ' left</span>';
-      var sizes = (p.sizes && p.sizes.length) ? '<p class="product-sizes">Sizes: ' + p.sizes.map(esc).join(', ') + '</p>' : '';
-      var desc = p.description ? '<p class="product-desc">' + esc(p.description) + '</p>' : '';
-      return '<div class="product-card' + (stock === 0 ? ' out' : '') + '">' +
-        '<div class="product-media">' + visual + badge + '</div>' +
-        '<p class="product-name">' + esc(p.name) + '</p>' +
-        '<p class="product-price">' + esc(p.price) + '</p>' + sizes + desc + '</div>';
-    }).join('');
-  }
+    // Auto-disappearing Toast Notifications
+    window.showToast = function(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = `toast-msg ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => { toast.remove(); }, 1500);
+    };
 
-  /* ---------- Router (hash based: #home, #shop, #shop/bras, #about ...) ---------- */
-  var VIEWS = ['home', 'shop', 'about', 'size-guide', 'shipping-returns', 'contact'];
-  var TITLES = {
-    'home': 'Soie — Intimates, made to feel like yours', 'shop': 'Shop All — Soie', 'about': 'About Us — Soie',
-    'size-guide': 'Size Guide — Soie', 'shipping-returns': 'Shipping & Returns — Soie', 'contact': 'Contact Us — Soie'
-  };
+    // Initial Inventory Catalog and Transactions
+    let inventoryCatalog = [
+      { code: "763225", descEn: "Black Gypsum Screw 3/4*7", descAr: "برغى جبس اسود خشن 3/4*7", unit: "Pieces", openQty: 42000, openAmt: 1207.50, openDate: "2026-01-01", classification: "Hardware / أدوات", customData: "High Runner" },
+      { code: "749", descEn: "Stickers 95 Noor Khawi", descAr: "استيكرات 95 نور خوي", unit: "Roll", openQty: 40000, openAmt: 50000, openDate: "2026-02-15", classification: "Stationery / مطبوعات", customData: "Station Branding" },
+      { code: "784", descEn: "Stickers 91", descAr: "استيكرات 91", unit: "Roll", openQty: 4800, openAmt: 5000, openDate: "2026-03-03", classification: "Stationery / مطبوعات", customData: "Station Branding" },
+      { code: "741", descEn: "Sticker Diesel", descAr: "استيكر ديزل", unit: "Pieces", openQty: 125, openAmt: 1250, openDate: "2026-03-03", classification: "Stationery / مطبوعات", customData: "Fuel Label" }
+    ];
 
-  function route() {
-    var raw = location.hash.replace(/^#\/?/, '');
-    // Ignore Netlify Identity links such as #invite_token=... or #recovery_token=...
-    if (raw && /token=|error=/.test(raw)) return;
-    var parts = raw.split('/');
-    var view = parts[0] || 'home';
-    if (VIEWS.indexOf(view) === -1) view = 'home';
+    let transactions = [
+      { id: 101, code: "763225", date: "2026-03-10", voucher: "V-01", inQty: 10000, outQty: 0, invoiceAmt: 300.00, costCentre: "", station: "", remarks: "Initial Inbound shipment" },
+      { id: 102, code: "763225", date: "2026-03-15", voucher: "V-02", inQty: 0, outQty: 5000, invoiceAmt: 0, costCentre: "Station 10", station: "Southern Depot", remarks: "Dispatched to station" },
+      { id: 103, code: "749", date: "2026-03-20", voucher: "V-03", inQty: 0, outQty: 2000, invoiceAmt: 0, costCentre: "Station 12", station: "Main Hub", remarks: "Regular dispatch" }
+    ];
 
-    document.querySelectorAll('.view').forEach(function (v) { v.hidden = (v.id !== 'view-' + view); });
-    document.title = TITLES[view];
+    let studioItemCodes = new Set(["763225", "749"]);
+    let checkedItemCodes = new Set();
+    let selectedStudioCodes = new Set(["763225", "749"]);
+    let currentTxFilterCode = null;
+    let overviewChartInstance = null;
+    let contributionChartInstance = null;
 
-    var key = view === 'shop' ? 'shop/' + (parts[1] || 'all') : view;
-    document.querySelectorAll('[data-nav]').forEach(function (a) { a.classList.toggle('active', a.dataset.nav === key); });
-
-    if (view === 'shop') {
-      currentFilter = ['all', 'new-in', 'bras', 'panties', 'sets'].indexOf(parts[1]) !== -1 ? parts[1] : 'all';
-      renderShop();
+    function initDashboard() {
+      checkAuth();
+      setupDateRestrictions();
+      populateDynamicMonths();
+      renderAll();
     }
-    window.scrollTo(0, 0);
-    closeNav();
-  }
 
-  /* ---------- Mobile nav ---------- */
-  var nav = document.getElementById('primary-nav');
-  var toggle = document.getElementById('nav-toggle');
-  function closeNav() {
-    nav.classList.remove('open');
-    toggle.innerHTML = '&#9776;';
-    toggle.setAttribute('aria-expanded', 'false');
-  }
-  toggle.addEventListener('click', function () {
-    var open = nav.classList.toggle('open');
-    toggle.innerHTML = open ? '&#10005;' : '&#9776;';
-    toggle.setAttribute('aria-expanded', open);
-  });
+    function checkAuth() {
+      const savedUser = sessionStorage.getItem('currentUser');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        applyRolePermissions();
+      } else {
+        var myModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        myModal.show();
+      }
+    }
 
-  /* ---------- Filter buttons ---------- */
-  document.getElementById('filter-row').addEventListener('click', function (e) {
-    var btn = e.target.closest('.filter-pill');
-    if (!btn) return;
-    location.hash = btn.dataset.filter === 'all' ? '#shop' : '#shop/' + btn.dataset.filter;
-  });
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+      const pass = document.getElementById('loginPassword').value.trim();
+      const errEl = document.getElementById('loginError');
 
-  /* ---------- Contact form → Netlify Forms ---------- */
-  var form = document.getElementById('contact-form');
-  var note = document.getElementById('form-note');
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var body = new URLSearchParams(new FormData(form)).toString();
-    fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body })
-      .then(function (r) {
-        if (!r.ok) throw new Error('failed');
-        note.textContent = 'Thanks, your message has been sent. We’ll reply within one business day.';
-        form.reset();
-      })
-      .catch(function () {
-        note.textContent = 'This form only works once the site is live on Netlify, so it can’t send from a local preview.';
+      if (USERS[email] && USERS[email].pass === pass) {
+        currentUser = { email, role: USERS[email].role, name: USERS[email].name };
+        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+        errEl.style.display = 'none';
+        
+        var modalEl = document.getElementById('loginModal');
+        var modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+
+        applyRolePermissions();
+        renderAll();
+        showToast(currentLang === 'ar' ? "تم تسجيل الدخول بنجاح!" : "Logged in successfully!");
+      } else {
+        errEl.innerText = "Invalid Email or Password / البريد الإلكتروني أو كلمة المرور غير صحيحة";
+        errEl.style.display = 'block';
+      }
+    }
+
+    function logoutSession() {
+      sessionStorage.removeItem('currentUser');
+      currentUser = null;
+      window.location.reload();
+    }
+
+    function applyRolePermissions() {
+      const roleBadge = document.getElementById('userRoleBadge');
+      if (currentUser.role === 'admin') {
+        roleBadge.innerText = "Administrator (Admin)";
+        roleBadge.className = "badge bg-danger px-3 py-2";
+      } else {
+        roleBadge.innerText = "Staff Clerk";
+        roleBadge.className = "badge bg-success px-3 py-2";
+      }
+    }
+
+    function setupDateRestrictions() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const dateInput = document.getElementById('txDateInput');
+      const modalDateInput = document.getElementById('newOpenDate');
+      if (dateInput) { dateInput.max = todayStr; dateInput.value = todayStr; }
+      if (modalDateInput) { modalDateInput.value = todayStr; }
+    }
+
+    function populateDynamicMonths() {
+      const select = document.getElementById('masterMonthSelect');
+      if (!select) return;
+      const prevSelected = select.value;
+      select.innerHTML = '';
+
+      let activeMonthsSet = new Set(["2026-03", "2026-04"]);
+      inventoryCatalog.forEach(i => { if (i.openDate) activeMonthsSet.add(i.openDate.substring(0, 7)); });
+      transactions.forEach(t => { if (t.date) activeMonthsSet.add(t.date.substring(0, 7)); });
+
+      let sortedMonths = Array.from(activeMonthsSet).sort();
+      sortedMonths.forEach(val => {
+        let opt = document.createElement('option');
+        opt.value = val;
+        opt.text = val;
+        select.appendChild(opt);
       });
-  });
 
-  /* ---------- Start ---------- */
-  window.addEventListener('hashchange', route);
-  loadProducts().then(route);
-})();
-</script>
+      let optAll = document.createElement('option');
+      optAll.value = 'ALL';
+      optAll.text = 'All Months / YTD';
+      select.appendChild(optAll);
+
+      if (prevSelected && Array.from(select.options).some(o => o.value === prevSelected)) {
+        select.value = prevSelected;
+      } else {
+        select.value = '2026-04';
+      }
+    }
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      const htmlTag = document.documentElement;
+      if (lang === 'ar') {
+        htmlTag.setAttribute('dir', 'rtl');
+        htmlTag.setAttribute('lang', 'ar');
+      } else {
+        htmlTag.setAttribute('dir', 'ltr');
+        htmlTag.setAttribute('lang', 'en');
+      }
+      document.getElementById('barcodeLangSelect').value = lang;
+      renderAll();
+      showToast(lang === 'ar' ? "تم التبديل إلى العربية" : "Switched to English");
+    }
+
+    function switchTab(tabName) {
+      activeTabName = tabName;
+      if (tabName === 'overview') renderOverviewKPIs();
+      if (tabName === 'labels') renderLabelsGrid();
+      if (tabName === 'analytics') { renderContributionChart(); renderLowestInventoryTable(); }
+      renderAll();
+    }
+
+    function onMasterMonthChanged() {
+      renderAll();
+    }
+
+    function openAddModal() {
+      document.getElementById('newItemForm').reset();
+      document.getElementById('newOpenQty').value = 0;
+      document.getElementById('newOpenAmt').value = 0.00;
+      document.getElementById('newOpenDate').value = new Date().toISOString().split('T')[0];
+      var myModal = new bootstrap.Modal(document.getElementById('addItemModal'));
+      myModal.show();
+    }
+
+    function openPrintSettingsModal() {
+      var myModal = new bootstrap.Modal(document.getElementById('printSettingsModal'));
+      myModal.show();
+    }
+
+    function applyPrintSettingsAndClose() {
+      var modalEl = document.getElementById('printSettingsModal');
+      var modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+      showToast(currentLang === 'ar' ? "تم حفظ إعدادات الطباعة بنجاح!" : "Print settings applied successfully!");
+    }
+
+    function getItemStats(itemCode, selectedMonth) {
+      const item = inventoryCatalog.find(i => i.code === itemCode);
+      if (!item) return { openQty: 0, openAmt: 0, inQty: 0, outQty: 0, closingQty: 0, closingAmt: 0, avgPrice: 0 };
+
+      let totalIn = transactions.filter(tx => tx.code === itemCode).reduce((acc, tx) => acc + (parseFloat(tx.inQty) || 0), 0);
+      let totalOut = transactions.filter(tx => tx.code === itemCode).reduce((acc, tx) => acc + (parseFloat(tx.outQty) || 0), 0);
+      let totalInAmt = transactions.filter(tx => tx.code === itemCode).reduce((acc, tx) => acc + (parseFloat(tx.invoiceAmt) || 0), 0);
+
+      const openQ = parseFloat(item.openQty) || 0;
+      const openA = parseFloat(item.openAmt) || 0;
+      const avgPrice = (openQ + totalIn) > 0 ? (openA + totalInAmt) / (openQ + totalIn) : 0;
+      const finalClosingQty = openQ + totalIn - totalOut;
+      const finalClosingAmt = finalClosingQty * avgPrice;
+
+      return { openQty: openQ, openAmt: openA, inQty: totalIn, outQty: totalOut, closingQty: finalClosingQty, closingAmt: finalClosingAmt, avgPrice };
+    }
+
+    function updateBannerTotals() {
+      let totalQty = 0;
+      let totalAmt = 0;
+      inventoryCatalog.forEach(item => {
+        const stats = getItemStats(item.code, 'ALL');
+        totalQty += stats.closingQty;
+        totalAmt += stats.closingAmt;
+      });
+      document.getElementById('bannerQty').innerText = totalQty.toLocaleString(undefined, {minimumFractionDigits: 2});
+      document.getElementById('bannerAmt').innerText = totalAmt.toLocaleString(undefined, {minimumFractionDigits: 2});
+    }
+
+    function renderAll() {
+      updateBannerTotals();
+      renderOverviewKPIs();
+      renderOpeningBalanceTable();
+      renderTransactionTable();
+      renderLabelsGrid();
+      renderContributionChart();
+      renderLowestInventoryTable();
+      populateDatalist();
+    }
+
+    function renderOverviewKPIs() {
+      document.getElementById('kpiTotalItems').textContent = inventoryCatalog.length;
+      let totalValuation = 0;
+      inventoryCatalog.forEach(i => {
+        const stats = getItemStats(i.code, 'ALL');
+        totalValuation += stats.closingAmt;
+      });
+      document.getElementById('kpiValuation').textContent = `SAR ${totalValuation.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+      
+      const categories = new Set(inventoryCatalog.map(i => i.classification || "General"));
+      document.getElementById('kpiCategories').textContent = categories.size;
+
+      // Render Overview Category Bar Chart
+      const counts = {};
+      inventoryCatalog.forEach(i => {
+        const cls = i.classification || "General";
+        counts[cls] = (counts[cls] || 0) + 1;
+      });
+
+      const ctx = document.getElementById('overviewCategoryChart').getContext('2d');
+      if (overviewChartInstance) overviewChartInstance.destroy();
+
+      overviewChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(counts),
+          datasets: [{
+            label: currentLang === 'ar' ? 'عدد المواد' : 'Item Count',
+            data: Object.values(counts),
+            backgroundColor: '#1a365d',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+      });
+    }
+
+    function renderOpeningBalanceTable() {
+      const tbody = document.getElementById('openingBalanceTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      
+      const searchQuery = (document.getElementById('openingSearch').value || '').toLowerCase();
+      const filtered = inventoryCatalog.filter(item => 
+        item.code.toLowerCase().includes(searchQuery) || item.descEn.toLowerCase().includes(searchQuery) || item.descAr.toLowerCase().includes(searchQuery)
+      );
+
+      filtered.forEach((item, index) => {
+        const isGenerated = studioItemCodes.has(item.code);
+        const isChecked = checkedItemCodes.has(item.code);
+        const displayName = currentLang === 'ar' ? (item.descAr || item.descEn) : (item.descEn || item.descAr);
+
+        tbody.innerHTML += `
+          <tr>
+            <td class="text-center"><input type="checkbox" class="table-checkbox" value="${item.code}" ${isChecked ? 'checked' : ''} onchange="handleInventoryCheckbox(this)"></td>
+            <td class="text-center fw-bold">${index + 1}</td>
+            <td class="text-center"><span class="clickable-item" onclick="goToTransactions('${item.code}')">${item.code}</span></td>
+            <td class="fw-semibold">${item.descEn || '-'}</td>
+            <td class="fw-semibold">${item.descAr || '-'}</td>
+            <td>${item.unit || 'Pieces'}</td>
+            <td class="text-end">${parseFloat(item.openQty || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+            <td class="text-end">SAR ${parseFloat(item.openAmt || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+            <td class="text-center">
+              <button class="btn btn-sm ${isGenerated ? 'btn-success' : 'btn-outline-primary'} py-0 px-2" onclick="toggleStudioLabel('${item.code}')">
+                ${isGenerated ? '✓ Generated' : '+ Generate'}
+              </button>
+            </td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-danger py-0 px-1" onclick="deleteItem('${item.code}')">✕</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function handleInventoryCheckbox(cb) {
+      if (cb.checked) checkedItemCodes.add(cb.value);
+      else checkedItemCodes.delete(cb.value);
+    }
+
+    function toggleSelectAllInventory(masterCb) {
+      const cbs = document.querySelectorAll('.table-checkbox');
+      cbs.forEach(cb => {
+        cb.checked = masterCb.checked;
+        if (masterCb.checked) checkedItemCodes.add(cb.value);
+        else checkedItemCodes.delete(cb.value);
+      });
+    }
+
+    function toggleStudioLabel(code) {
+      if (studioItemCodes.has(code)) {
+        studioItemCodes.delete(code);
+        selectedStudioCodes.delete(code);
+        showToast("Removed from Barcode Studio", "warning");
+      } else {
+        studioItemCodes.add(code);
+        selectedStudioCodes.add(code);
+        showToast("Added to Barcode Studio!");
+      }
+      renderOpeningBalanceTable();
+      renderLabelsGrid();
+    }
+
+    function deleteItem(code) {
+      if (confirm(currentLang === 'ar' ? `هل أنت متأكد من حذف الصنف ${code}؟` : `Are you sure you want to delete item code ${code}?`)) {
+        inventoryCatalog = inventoryCatalog.filter(i => i.code !== code);
+        transactions = transactions.filter(t => t.code !== code);
+        studioItemCodes.delete(code);
+        selectedStudioCodes.delete(code);
+        renderAll();
+        showToast("Item successfully deleted.", "warning");
+      }
+    }
+
+    function populateDatalist() {
+      const datalist = document.getElementById('inventoryListOptions');
+      if (!datalist) return;
+      datalist.innerHTML = '';
+      inventoryCatalog.forEach(item => {
+        const displayName = currentLang === 'ar' ? (item.descAr || item.descEn) : (item.descEn || item.descAr);
+        datalist.innerHTML += `<option value="${item.code}">${item.code} - ${displayName}</option>`;
+      });
+    }
+
+    function goToTransactions(code) {
+      currentTxFilterCode = code;
+      activeTabName = 'transactions';
+      document.querySelector('#tx-tab').click();
+      document.getElementById('txItemCode').value = code;
+      document.getElementById('txSearchInput').value = code;
+      renderTransactionTable();
+    }
+
+    function resetTxFilter() {
+      currentTxFilterCode = null;
+      document.getElementById('txSearchInput').value = "";
+      document.getElementById('txItemCode').value = "";
+      renderTransactionTable();
+    }
+
+    function filterTransactionsBySearch(val) {
+      const query = val.trim().toLowerCase();
+      currentTxFilterCode = query ? query : null;
+      renderTransactionTable();
+    }
+
+    function onItemCodeTyped(val) {
+      const query = val.trim().toLowerCase();
+      const matched = inventoryCatalog.find(i => i.code.toLowerCase() === query);
+      if (matched) {
+        currentTxFilterCode = matched.code;
+        renderTransactionTable();
+      }
+    }
+
+    function toggleMovementFields() {
+      const type = document.getElementById('txType').value;
+      const invoiceContainer = document.getElementById('invoiceAmountContainer');
+      const invoiceInput = document.getElementById('txInvoiceAmt');
+      if (type === 'INBOUND') {
+        invoiceContainer.style.display = 'block';
+        invoiceInput.required = true;
+      } else {
+        invoiceContainer.style.display = 'none';
+        invoiceInput.required = false;
+      }
+    }
+
+    function renderTransactionTable() {
+      const tbody = document.getElementById('transactionTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let sortedCatalog = [...inventoryCatalog];
+      if (currentTxFilterCode) {
+        sortedCatalog = sortedCatalog.filter(i => i.code.toLowerCase().includes(currentTxFilterCode.toLowerCase()) || i.descEn.toLowerCase().includes(currentTxFilterCode.toLowerCase()));
+      }
+
+      let globalSn = 1;
+      sortedCatalog.forEach(item => {
+        const openQ = parseFloat(item.openQty) || 0;
+        const openA = parseFloat(item.openAmt) || 0;
+        const openAvg = openQ > 0 ? openA / openQ : 0;
+
+        const itemTxs = transactions.filter(tx => tx.code === item.code);
+
+        // Opening row
+        tbody.innerHTML += `
+          <tr class="table-secondary">
+            <td class="text-center fw-bold">${globalSn++}</td>
+            <td class="text-center"><span class="badge bg-dark">${item.code}</span></td>
+            <td class="fw-semibold">${item.descEn || '-'}</td>
+            <td class="text-end">${openQ.toLocaleString()}</td>
+            <td>${item.openDate || '2026-01-01'}</td>
+            <td>OPENING</td>
+            <td class="text-success text-end fw-bold">0</td>
+            <td class="text-danger text-end fw-bold">0</td>
+            <td class="text-end fw-bold">${openQ.toLocaleString()}</td>
+            <td class="text-end text-success fw-bold">SAR ${openA.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+            <td class="text-end">SAR ${openAvg.toFixed(2)}</td>
+            <td>Opening Balance Rollover</td>
+          </tr>
+        `;
+
+        if (itemTxs.length > 0) {
+          let runningQty = openQ;
+          let runningAmt = openA;
+          itemTxs.forEach(tx => {
+            let inQ = parseFloat(tx.inQty) || 0;
+            let outQ = parseFloat(tx.outQty) || 0;
+            if (inQ > 0) { runningQty += inQ; runningAmt += (parseFloat(tx.invoiceAmt) || 0); }
+            if (outQ > 0) {
+              let avgP = runningQty > 0 ? runningAmt / runningQty : 0;
+              runningQty -= outQ;
+              runningAmt -= outQ * avgP;
+            }
+            let currentAvg = runningQty > 0 ? runningAmt / runningQty : 0;
+
+            tbody.innerHTML += `
+              <tr>
+                <td class="text-center fw-bold">${globalSn++}</td>
+                <td class="text-center"><span class="badge bg-light text-dark border">${tx.code}</span></td>
+                <td class="fw-semibold">${item.descEn || '-'}</td>
+                <td class="text-end">${openQ.toLocaleString()}</td>
+                <td>${tx.date}</td>
+                <td>${tx.voucher}</td>
+                <td class="text-success text-end fw-bold">${inQ || 0}</td>
+                <td class="text-danger text-end fw-bold">${outQ || 0}</td>
+                <td class="text-end fw-bold">${runningQty.toLocaleString()}</td>
+                <td class="text-end text-success fw-bold">SAR ${runningAmt.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td class="text-end">SAR ${currentAvg.toFixed(2)}</td>
+                <td>${tx.station || tx.costCentre || '-'} / ${tx.remarks || ''}</td>
+              </tr>
+            `;
+          });
+        }
+      });
+    }
+
+    function submitTransaction(e) {
+      e.preventDefault();
+      const code = document.getElementById('txItemCode').value.trim();
+      const voucher = document.getElementById('txVoucher').value.trim();
+      const type = document.getElementById('txType').value;
+      const qty = parseFloat(document.getElementById('txQty').value) || 0;
+      const invoiceAmt = parseFloat(document.getElementById('txInvoiceAmt').value) || 0;
+      const costCentre = document.getElementById('txCostCentre').value.trim();
+      const station = document.getElementById('txStation').value.trim();
+      const remarks = document.getElementById('txRemarks').value.trim();
+      const dateStr = document.getElementById('txDateInput').value;
+
+      const found = inventoryCatalog.find(i => i.code === code);
+      if (!found) {
+        alert("Error: Inventory item does not exist in the catalog.");
+        return;
+      }
+
+      const newTx = {
+        id: Date.now(),
+        code: code,
+        date: dateStr,
+        voucher: voucher,
+        inQty: (type === 'INBOUND' || type === 'RETURN') ? qty : 0,
+        outQty: type === 'OUTGOING' ? qty : 0,
+        invoiceAmt: type === 'INBOUND' ? invoiceAmt : 0,
+        costCentre: costCentre,
+        station: station,
+        remarks: remarks
+      };
+      transactions.push(newTx);
+      renderAll();
+      document.getElementById('txForm').reset();
+      setupDateRestrictions();
+      showToast("Transaction successfully recorded!");
+    }
+
+    // Barcode Studio & Label Rendering
+    function renderLabelsGrid() {
+      const grid = document.getElementById('labelsGridContainer');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      if (studioItemCodes.size === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+          <h3>Label Studio is Empty</h3>
+          <p>Click on (+ Generate) beside any item in the inventory register to display its barcode label here.</p>
+        </div>`;
+        return;
+      }
+
+      const labelLang = document.getElementById('barcodeLangSelect').value;
+
+      studioItemCodes.forEach(code => {
+        const item = inventoryCatalog.find(i => i.code === code);
+        if (!item) return;
+
+        const isSelected = selectedStudioCodes.has(code);
+        const card = document.createElement('div');
+        card.className = `sticker-card ${!isSelected ? 'unselected-print' : ''}`;
+
+        const displayName = labelLang === 'ar' ? (item.descAr || item.descEn) : (item.descEn || item.descAr);
+
+        card.innerHTML = `
+          <div class="sticker-header">
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <input type="checkbox" class="studio-label-checkbox" value="${item.code}" ${isSelected ? 'checked' : ''} onchange="handleStudioCheckbox(this, '${item.code}')">
+              <span style="font-size:0.6rem; color:#64748b;">Al Noor Fuel Est</span>
+            </div>
+            <button class="del-btn" onclick="toggleStudioLabel('${item.code}')">✕</button>
+          </div>
+          <div class="sticker-title">${displayName}</div>
+          <div class="meta-box">
+            <div><label>Code</label><span>${item.code}</span></div>
+            <div><label>Unit</label><span>${item.unit || 'Pcs'}</span></div>
+            <div><label>Class</label><span>${item.classification || 'General'}</span></div>
+          </div>
+          ${item.customData ? `<div class="custom-link-badge">📌 ${item.customData}</div>` : ''}
+          <div class="codes-flex-container">
+            <div class="barcode-section">
+              <svg id="barcode-${item.code}"></svg>
+            </div>
+            <div class="qrcode-section">
+              <div id="qrcode-${item.code}"></div>
+              <span class="qrcode-label">QR</span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+
+        try {
+          JsBarcode(`#barcode-${item.code}`, item.code, { format: "CODE128", height: 28, displayValue: true, fontSize: 8, margin: 1 });
+        } catch (e) {}
+
+        try {
+          const qrPayload = `Code: ${item.code} | Name: ${displayName} | Unit: ${item.unit}`;
+          const qr = qrcode(0, 'M');
+          qr.addData(qrPayload);
+          qr.make();
+          document.getElementById(`qrcode-${item.code}`).innerHTML = qr.createSvgTag({ scalable: true, margin: 0 });
+        } catch (e) {}
+      });
+    }
+
+    function handleStudioCheckbox(cb, code) {
+      if (cb.checked) selectedStudioCodes.add(code);
+      else selectedStudioCodes.delete(code);
+    }
+
+    function toggleSelectAllStudioLabels(masterCb) {
+      const cbs = document.querySelectorAll('.studio-label-checkbox');
+      cbs.forEach(cb => {
+        cb.checked = masterCb.checked;
+        if (masterCb.checked) selectedStudioCodes.add(cb.value);
+        else selectedStudioCodes.delete(cb.value);
+      });
+    }
+
+    function clearLabelStudio() {
+      studioItemCodes.clear();
+      selectedStudioCodes.clear();
+      renderLabelsGrid();
+      renderOpeningBalanceTable();
+      showToast("Barcode Studio cleared", "warning");
+    }
+
+    function triggerCleanPrint() {
+      if (selectedStudioCodes.size === 0) {
+        alert("Please select at least one label from the studio to print.");
+        return;
+      }
+      window.print();
+    }
+
+    // Analytics Charts
+    function renderContributionChart() {
+      const ctx = document.getElementById('contributionChart').getContext('2d');
+      const rankedItems = [...inventoryCatalog].map(item => {
+        const stats = getItemStats(item.code, 'ALL');
+        const totalIn = stats.openQty + stats.inQty;
+        const ratio = totalIn > 0 ? ((stats.outQty / totalIn) * 100).toFixed(1) : 0;
+        const displayName = currentLang === 'ar' ? (item.descAr || item.descEn) : (item.descEn || item.descAr);
+        return { desc: displayName, ratio: parseFloat(ratio) };
+      }).sort((a, b) => b.ratio - a.ratio).slice(0, 20);
+
+      if (contributionChartInstance) contributionChartInstance.destroy();
+
+      contributionChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: rankedItems.map(i => i.desc),
+          datasets: [{
+            label: currentLang === 'ar' ? 'نسبة الصادر إلى الوارد (%)' : 'Outgoing vs Total Received (%)',
+            data: rankedItems.map(i => i.ratio),
+            backgroundColor: '#1a365d',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, max: 100 } }
+        }
+      });
+    }
+
+    function renderLowestInventoryTable() {
+      const tbody = document.getElementById('lowestInventoryTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let itemsWithMetrics = inventoryCatalog.map(item => {
+        const stats = getItemStats(item.code, 'ALL');
+        const closing = Math.max(stats.closingQty, 0.01);
+        const velocityScore = stats.outQty / closing;
+        return {
+          code: item.code,
+          descEn: item.descEn,
+          descAr: item.descAr,
+          closingQty: stats.closingQty,
+          outQty: stats.outQty,
+          velocityScore
+        };
+      }).sort((a, b) => a.closingQty - b.closingQty);
+
+      itemsWithMetrics.forEach((item, idx) => {
+        let badge = item.closingQty <= 500 ? '<span class="badge bg-danger">Critical Reorder</span>' : '<span class="badge bg-success">Normal</span>';
+        tbody.innerHTML += `
+          <tr>
+            <td class="text-center fw-bold">${idx + 1}</td>
+            <td class="text-center"><span class="clickable-item" onclick="goToTransactions('${item.code}')">${item.code}</span></td>
+            <td class="fw-semibold">${item.descEn}</td>
+            <td class="fw-semibold">${item.descAr}</td>
+            <td class="text-end fw-bold text-danger">${item.closingQty.toLocaleString()}</td>
+            <td class="text-end fw-bold text-success">${item.outQty.toLocaleString()}</td>
+            <td class="text-end">${item.velocityScore.toFixed(2)}x</td>
+            <td class="text-center">${badge}</td>
+            <td class="text-center"><button class="btn btn-sm btn-outline-primary py-0" onclick="goToTransactions('${item.code}')">+ Inbound</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    // Modal Add Item Handler
+    function addNewItem(e) {
+      e.preventDefault();
+      const code = document.getElementById('newCode').value.trim();
+      let descEn = document.getElementById('newDescEn').value.trim();
+      let descAr = document.getElementById('newDescAr').value.trim();
+      const unit = document.getElementById('newUnit').value.trim();
+      const openQty = parseFloat(document.getElementById('newOpenQty').value) || 0;
+      const openAmt = parseFloat(document.getElementById('newOpenAmt').value) || 0;
+      const openDate = document.getElementById('newOpenDate').value;
+      const classification = document.getElementById('newClassification').value.trim();
+      const customData = document.getElementById('newCustomData').value.trim();
+
+      if (descEn && !descAr) descAr = autoTranslateText(descEn, 'ar');
+      else if (descAr && !descEn) descEn = autoTranslateText(descAr, 'en');
+
+      let existing = inventoryCatalog.find(i => i.code === code);
+      if (!existing) {
+        inventoryCatalog.push({ code, descEn, descAr, unit, openQty, openAmt, openDate, classification, customData });
+      } else {
+        existing.descEn = descEn; existing.descAr = descAr; existing.unit = unit; existing.openQty = openQty; existing.openAmt = openAmt; existing.classification = classification; existing.customData = customData;
+      }
+
+      renderAll();
+      var modalEl = document.getElementById('addItemModal');
+      var modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+      showToast("Inventory item saved successfully!");
+    }
+
+    // Excel & Template Utilities via SheetJS
+    function downloadExcelTemplate() {
+      const templateData = [
+        { "Material Code": "1001", "Arabic Name": "برغى جبس اسود", "English Name": "Black Gypsum Screw", "Unit": "Pieces", "Opening Quantity": 10000, "Opening Amount": 500.00, "Opening Date": "2026-01-01", "Classification": "Hardware" }
+      ];
+      const worksheet = XLSX.utils.json_to_sheet(templateData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Template");
+      XLSX.writeFile(workbook, "Al_Noor_Inventory_Template.xlsx");
+      showToast("Template downloaded successfully!");
+    }
+
+    function downloadAvailableInventoryExcel() {
+      const exportData = inventoryCatalog.map(i => ({
+        "Material Code": i.code,
+        "Arabic Name": i.descAr,
+        "English Name": i.descEn,
+        "Unit": i.unit,
+        "Opening Quantity": i.openQty,
+        "Opening Amount": i.openAmt,
+        "Opening Date": i.openDate,
+        "Classification": i.classification
+      }));
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Inventory");
+      XLSX.writeFile(workbook, `Al_Noor_Inventory_${new Date().toISOString().slice(0,10)}.xlsx`);
+      showToast("Inventory exported successfully!");
+    }
+
+    function importExcelFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = new Uint8Array(evt.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet);
+          
+          let count = 0;
+          rows.forEach(r => {
+            const code = String(r["Material Code"] || r["Code"] || "").trim();
+            const descAr = String(r["Arabic Name"] || "").trim();
+            const descEn = String(r["English Name"] || descAr).trim();
+            const unit = String(r["Unit"] || "Pieces").trim();
+            const openQty = parseFloat(r["Opening Quantity"] || r["Opening Balance"] || 0);
+            const openAmt = parseFloat(r["Opening Amount"] || 0);
+            const openDate = String(r["Opening Date"] || "2026-01-01").trim();
+            const classification = String(r["Classification"] || "General").trim();
+
+            if (code && (descAr || descEn)) {
+              let existing = inventoryCatalog.find(i => i.code === code);
+              if (!existing) {
+                inventoryCatalog.push({ code, descEn, descAr, unit, openQty, openAmt, openDate, classification, customData: "" });
+              } else {
+                existing.descEn = descEn; existing.descAr = descAr; existing.unit = unit; existing.openQty = openQty; existing.openAmt = openAmt;
+              }
+              count++;
+            }
+          });
+          renderAll();
+          showToast(`Successfully imported ${count} items!`);
+        } catch (err) {
+          alert("Error parsing Excel/CSV file.");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function downloadStockMovementReport() {
+      let csv = "\ufeffSN,Item Code,Item Name (English),Item Name (Arabic),Opening Qty,Opening Amount,Closing Stock,Closing Amount,Average Price\n";
+      inventoryCatalog.forEach((item, idx) => {
+        const stats = getItemStats(item.code, 'ALL');
+        csv += `${idx + 1},${item.code},"${item.descEn}","${item.descAr}",${stats.openQty},${stats.openAmt},${stats.closingQty},${stats.closingAmt.toFixed(2)},${stats.avgPrice.toFixed(2)}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", "Stock_Movement_Summary.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function downloadStockLedgerReport() {
+      let csv = "\ufeffSN,Item Code,Item Name,Date,Voucher,In Qty,Out Qty,Closing Stock,Closing Amount,Remarks\n";
+      let sn = 1;
+      inventoryCatalog.forEach(item => {
+        const itemTxs = transactions.filter(t => t.code === item.code);
+        let q = item.openQty; let a = item.openAmt;
+        csv += `${sn++},${item.code},"${item.descEn}",${item.openDate || '2026-01-01'},OPENING,0,0,${q},${a.toFixed(2)},"Opening Balance"\n`;
+        itemTxs.forEach(t => {
+          q += (t.inQty || 0) - (t.outQty || 0);
+          a += (t.invoiceAmt || 0);
+          csv += `${sn++},${item.code},"${item.descEn}",${t.date},${t.voucher},${t.inQty},${t.outQty},${q},${a.toFixed(2)},"${t.remarks || ''}"\n`;
+        });
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", "Stock_Ledger_Detailed.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exportBackupJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ inventoryCatalog, transactions }, null, 2));
+      const anchor = document.createElement('a');
+      anchor.setAttribute("href", dataStr);
+      anchor.setAttribute("download", `Al_Noor_Backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      showToast("JSON Backup exported successfully!");
+    }
+  </script>
 </body>
 </html>
