@@ -153,7 +153,7 @@
       </div>
     </div>
 
-    <!-- MASTER MONTH SELECTION & EXCEL / UTILITIES BAR -->
+    <!-- MASTER MONTH SELECTION & EXCEL IMPORT BAR -->
     <div class="card p-3 mb-3 shadow-sm border-0 bg-white">
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
         <div class="d-flex align-items-center gap-2">
@@ -163,9 +163,6 @@
         <div class="d-flex gap-2 align-items-center flex-wrap">
           <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display:none;" onchange="window.importExcelFile(event)">
           <button class="btn btn-sm btn-success fw-semibold" onclick="document.getElementById('excelFileInput').click()">📊 <span id="importExcelBtnText">Import Excel/CSV</span></button>
-          <button class="btn btn-sm btn-outline-success fw-semibold" onclick="window.downloadExcelTemplate()">📂 <span id="downloadTemplateBtnText">Download Template</span></button>
-          <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="window.downloadAvailableInventoryExcel()">📥 <span id="downloadInvExcelText">Export Inventory</span></button>
-          <button class="btn btn-sm btn-outline-secondary fw-semibold" onclick="window.exportBackupJSON()">💾 JSON Backup</button>
         </div>
       </div>
     </div>
@@ -1091,22 +1088,6 @@
       window.showToast("Item saved to cloud database!");
     };
 
-    window.downloadExcelTemplate = function() {
-      let data = [{ "Material Code": "1001", "Arabic Name": "برغى جبس اسود", "English Name": "Black Gypsum Screw", "Unit": "Pieces", "Opening Quantity": 10000, "Opening Amount": 500, "Opening Date": "2026-01-01", "Classification": "Hardware" }];
-      let ws = XLSX.utils.json_to_sheet(data);
-      let wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Template");
-      XLSX.writeFile(wb, "Inventory_Template.xlsx");
-    };
-
-    window.downloadAvailableInventoryExcel = function() {
-      let data = inventoryCatalog.map(i => ({ "Material Code": i.code, "Arabic Name": i.descAr, "English Name": i.descEn, "Unit": i.unit, "Opening Quantity": i.openQty, "Opening Amount": i.openAmt, "Opening Date": i.openDate, "Classification": i.classification }));
-      let ws = XLSX.utils.json_to_sheet(data);
-      let wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Inventory");
-      XLSX.writeFile(wb, "Al_Noor_Inventory.xlsx");
-    };
-
     window.importExcelFile = function(e) {
       let file = e.target.files[0];
       if (!file) return;
@@ -1138,13 +1119,6 @@
         window.showToast(`Successfully uploaded ${count} items to cloud!`);
       };
       reader.readAsArrayBuffer(file);
-    };
-
-    window.exportBackupJSON = function() {
-      let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ inventoryCatalog, transactions }, null, 2));
-      let a = document.createElement('a');
-      a.href = dataStr; a.download = "Al_Noor_Backup.json";
-      a.click(); a.remove();
     };
   </script>
 </body>
