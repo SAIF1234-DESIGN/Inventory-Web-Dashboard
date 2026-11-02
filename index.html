@@ -92,7 +92,7 @@
     }
   </style>
 </head>
-<body onload="initDashboard()">
+<body onload="window.initDashboard()">
 
   <!-- SYSTEM LOGIN MODAL -->
   <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
@@ -102,7 +102,7 @@
           <h5 class="modal-title fw-bold">🔐 Al Noor Fuel Est. Authentication / تسجيل الدخول</h5>
         </div>
         <div class="modal-body p-4">
-          <form id="loginForm" onsubmit="handleLogin(event)">
+          <form id="loginForm" onsubmit="window.handleLogin(event)">
             <div class="mb-3">
               <label class="form-label fw-semibold">Email / البريد الإلكتروني</label>
               <input type="email" id="loginEmail" class="form-control" placeholder="kassarsaif@gmail.com or clerk@noor.com" required>
@@ -143,13 +143,13 @@
         <!-- Language Switcher -->
         <div class="d-flex align-items-center gap-1">
           <label class="fw-bold small mb-0 text-secondary">🌐 Lang:</label>
-          <select id="langSelect" class="form-select form-select-sm fw-bold" onchange="changeLanguage(this.value)" style="width: 115px;">
+          <select id="langSelect" class="form-select form-select-sm fw-bold" onchange="window.changeLanguage(this.value)" style="width: 115px;">
             <option value="en" selected>English</option>
             <option value="ar">العربية</option>
           </select>
         </div>
         <span class="badge bg-secondary px-3 py-2" id="userRoleBadge">Staff Clerk</span>
-        <button class="btn btn-sm btn-outline-danger fw-semibold" onclick="logoutSession()">Logout</button>
+        <button class="btn btn-sm btn-outline-danger fw-semibold" onclick="window.logoutSession()">Logout</button>
       </div>
     </div>
 
@@ -158,14 +158,14 @@
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
         <div class="d-flex align-items-center gap-2">
           <label class="fw-bold text-primary mb-0" id="masterMonthLabelText">📅 Active Month:</label>
-          <select id="masterMonthSelect" class="form-select form-select-sm fw-bold border-primary" onchange="onMasterMonthChanged()" style="width: 200px;"></select>
+          <select id="masterMonthSelect" class="form-select form-select-sm fw-bold border-primary" onchange="window.onMasterMonthChanged()" style="width: 200px;"></select>
         </div>
         <div class="d-flex gap-2 align-items-center flex-wrap">
-          <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display:none;" onchange="importExcelFile(event)">
+          <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display:none;" onchange="window.importExcelFile(event)">
           <button class="btn btn-sm btn-success fw-semibold" onclick="document.getElementById('excelFileInput').click()">📊 <span id="importExcelBtnText">Import Excel/CSV</span></button>
-          <button class="btn btn-sm btn-outline-success fw-semibold" onclick="downloadExcelTemplate()">📂 <span id="downloadTemplateBtnText">Download Template</span></button>
-          <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="downloadAvailableInventoryExcel()">📥 <span id="downloadInvExcelText">Export Inventory</span></button>
-          <button class="btn btn-sm btn-outline-secondary fw-semibold" onclick="exportBackupJSON()">💾 JSON Backup</button>
+          <button class="btn btn-sm btn-outline-success fw-semibold" onclick="window.downloadExcelTemplate()">📂 <span id="downloadTemplateBtnText">Download Template</span></button>
+          <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="window.downloadAvailableInventoryExcel()">📥 <span id="downloadInvExcelText">Export Inventory</span></button>
+          <button class="btn btn-sm btn-outline-secondary fw-semibold" onclick="window.exportBackupJSON()">💾 JSON Backup</button>
         </div>
       </div>
     </div>
@@ -173,19 +173,19 @@
     <!-- SEPARATED NAVIGATION TABS -->
     <ul class="nav nav-pills mb-3" id="dashboardTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#tabOverview" type="button" role="tab" onclick="switchTab('overview')">1. 📊 Overview & KPIs</button>
+        <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#tabOverview" type="button" role="tab" onclick="window.switchTab('overview')">1. 📊 Overview & KPIs</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="opening-tab" data-bs-toggle="pill" data-bs-target="#tabOpeningBalance" type="button" role="tab" onclick="switchTab('opening')">2. 📦 Opening & Register</button>
+        <button class="nav-link" id="opening-tab" data-bs-toggle="pill" data-bs-target="#tabOpeningBalance" type="button" role="tab" onclick="window.switchTab('opening')">2. 📦 Opening & Register</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="tx-tab" data-bs-toggle="pill" data-bs-target="#tabTransactions" type="button" role="tab" onclick="switchTab('transactions')">3. 📝 Transactions / Item Card</button>
+        <button class="nav-link" id="tx-tab" data-bs-toggle="pill" data-bs-target="#tabTransactions" type="button" role="tab" onclick="window.switchTab('transactions')">3. 📝 Transactions / Item Card</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="labels-tab" data-bs-toggle="pill" data-bs-target="#tabLabels" type="button" role="tab" onclick="switchTab('labels')">4. 🏷️ Barcode & QR Studio</button>
+        <button class="nav-link" id="labels-tab" data-bs-toggle="pill" data-bs-target="#tabLabels" type="button" role="tab" onclick="window.switchTab('labels')">4. 🏷️ Barcode & QR Studio</button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link" id="analytics-tab" data-bs-toggle="pill" data-bs-target="#tabAnalytics" type="button" role="tab" onclick="switchTab('analytics')">5. 📈 Analytics & Reorder</button>
+        <button class="nav-link" id="analytics-tab" data-bs-toggle="pill" data-bs-target="#tabAnalytics" type="button" role="tab" onclick="window.switchTab('analytics')">5. 📈 Analytics & Reorder</button>
       </li>
     </ul>
 
@@ -238,15 +238,15 @@
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <h5 class="fw-bold text-primary mb-0">📦 Opening Balance & Inventory Register</h5>
             <div class="d-flex gap-2 align-items-center flex-wrap">
-              <input type="text" id="openingSearch" class="form-control form-control-sm" placeholder="🔍 Search inventory code or name..." oninput="renderOpeningBalanceTable()" style="width: 220px;">
-              <button type="button" class="btn btn-sm btn-success fw-semibold text-nowrap" onclick="openAddModal()">+ Add New Item</button>
+              <input type="text" id="openingSearch" class="form-control form-control-sm" placeholder="🔍 Search inventory code or name..." oninput="window.renderOpeningBalanceTable()" style="width: 220px;">
+              <button type="button" class="btn btn-sm btn-success fw-semibold text-nowrap" onclick="window.openAddModal()">+ Add New Item</button>
             </div>
           </div>
           <div class="table-responsive" style="max-height: 550px; overflow-y: auto;">
             <table class="table table-bordered table-hover align-middle">
               <thead>
                 <tr>
-                  <th style="width: 50px;"><input type="checkbox" id="selectAllInv" onchange="toggleSelectAllInventory(this)"></th>
+                  <th style="width: 50px;"><input type="checkbox" id="selectAllInv" onchange="window.toggleSelectAllInventory(this)"></th>
                   <th style="width: 60px;">SN</th>
                   <th style="width: 120px;">Item Code</th>
                   <th>Item Name (English)</th>
@@ -270,17 +270,17 @@
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold text-primary mb-0">📝 Real-Time Transactional Movement (Item Card)</h5>
             <div class="d-flex gap-2 align-items-center">
-              <button class="btn btn-sm btn-outline-secondary fw-semibold" onclick="resetTxFilter()">Show All Inventory</button>
-              <input type="text" id="txSearchInput" class="form-control form-control-sm" list="inventoryListOptions" placeholder="🔍 Search item code..." oninput="filterTransactionsBySearch(this.value)" style="width: 230px;">
+              <button class="btn btn-sm btn-outline-secondary fw-semibold" onclick="window.resetTxFilter()">Show All Inventory</button>
+              <input type="text" id="txSearchInput" class="form-control form-control-sm" list="inventoryListOptions" placeholder="🔍 Search item code..." oninput="window.filterTransactionsBySearch(this.value)" style="width: 230px;">
               <datalist id="inventoryListOptions"></datalist>
             </div>
           </div>
           
           <!-- Transaction Entry Form -->
-          <form id="txForm" onsubmit="submitTransaction(event)" class="row g-2 mb-3 p-3 bg-light rounded border">
+          <form id="txForm" onsubmit="window.submitTransaction(event)" class="row g-2 mb-3 p-3 bg-light rounded border">
             <div class="col-md-2">
               <label class="form-label small fw-semibold">Item Code *</label>
-              <input type="text" id="txItemCode" class="form-control form-control-sm" list="inventoryListOptions" placeholder="Select code" oninput="onItemCodeTyped(this.value)" required>
+              <input type="text" id="txItemCode" class="form-control form-control-sm" list="inventoryListOptions" placeholder="Select code" oninput="window.onItemCodeTyped(this.value)" required>
             </div>
             <div class="col-md-2">
               <label class="form-label small fw-semibold">Voucher No. *</label>
@@ -288,7 +288,7 @@
             </div>
             <div class="col-md-2">
               <label class="form-label small fw-semibold">Movement Type *</label>
-              <select id="txType" class="form-select form-select-sm" onchange="toggleMovementFields()">
+              <select id="txType" class="form-select form-select-sm" onchange="window.toggleMovementFields()">
                 <option value="OUTGOING" selected>OUTGOING / صادر</option>
                 <option value="INBOUND">INBOUND / وارد</option>
                 <option value="RETURN">RETURN / مرتجع</option>
@@ -352,26 +352,26 @@
         <div class="card p-3 shadow-sm border-0 mb-4 bg-white">
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <div class="d-flex gap-2 align-items-center flex-wrap">
-              <input type="text" id="labelsSearch" class="form-control form-control-sm" placeholder="🔍 Search studio labels..." oninput="renderLabelsGrid()" style="width: 220px;">
-              <select id="labelsCategoryFilter" class="form-select form-select-sm" onchange="renderLabelsGrid()" style="width: 180px;">
+              <input type="text" id="labelsSearch" class="form-control form-control-sm" placeholder="🔍 Search studio labels..." oninput="window.renderLabelsGrid()" style="width: 220px;">
+              <select id="labelsCategoryFilter" class="form-select form-select-sm" onchange="window.renderLabelsGrid()" style="width: 180px;">
                 <option value="">All Classifications</option>
               </select>
               <div class="d-flex align-items-center gap-1 bg-light px-2 py-1 rounded border">
                 <label class="small fw-semibold text-secondary mb-0">Label Lang:</label>
-                <select id="barcodeLangSelect" class="form-select form-select-sm border-0 bg-transparent py-0 fw-bold" onchange="renderLabelsGrid()" style="width: 105px;">
+                <select id="barcodeLangSelect" class="form-select form-select-sm border-0 bg-transparent py-0 fw-bold" onchange="window.renderLabelsGrid()" style="width: 105px;">
                   <option value="en">English</option>
                   <option value="ar">العربية</option>
                 </select>
               </div>
               <div class="d-flex align-items-center gap-1">
-                <input type="checkbox" id="selectAllStudioLabels" onchange="toggleSelectAllStudioLabels(this)">
+                <input type="checkbox" id="selectAllStudioLabels" onchange="window.toggleSelectAllStudioLabels(this)">
                 <label for="selectAllStudioLabels" class="small fw-semibold text-secondary mb-0 cursor-pointer">Select All</label>
               </div>
             </div>
             <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="openPrintSettingsModal()">⚙️ Size Settings</button>
-              <button class="btn btn-sm btn-danger fw-semibold" onclick="clearLabelStudio()">🗑️ Clear Studio</button>
-              <button class="btn btn-sm btn-success fw-semibold" onclick="triggerCleanPrint()">🖨️ Print Labels</button>
+              <button class="btn btn-sm btn-outline-primary fw-semibold" onclick="window.openPrintSettingsModal()">⚙️ Size Settings</button>
+              <button class="btn btn-sm btn-danger fw-semibold" onclick="window.clearLabelStudio()">🗑️ Clear Studio</button>
+              <button class="btn btn-sm btn-success fw-semibold" onclick="window.triggerCleanPrint()">🖨️ Print Labels</button>
             </div>
           </div>
           <div class="labels-grid" id="labelsGridContainer"></div>
@@ -758,7 +758,7 @@
         let isGen = studioItemCodes.has(item.code);
         tbody.innerHTML += `
           <tr>
-            <td class="text-center"><input type="checkbox" class="table-checkbox" value="${item.code}" onchange="handleInventoryCheckbox(this)"></td>
+            <td class="text-center"><input type="checkbox" class="table-checkbox" value="${item.code}" onchange="window.handleInventoryCheckbox(this)"></td>
             <td class="text-center fw-bold">${idx + 1}</td>
             <td class="text-center"><span class="clickable-item" onclick="window.goToTransactions('${item.code}')">${item.code}</span></td>
             <td>${item.descEn || '-'}</td>
