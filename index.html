@@ -426,7 +426,7 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form id="newItemForm" onsubmit="addNewItem(event)">
+          <form id="newItemForm" onsubmit="window.addNewItem(event)">
             <div class="mb-3">
               <label class="form-label fw-semibold">Item Code (رمز الصنف) *</label>
               <input type="text" id="newCode" class="form-control" required>
@@ -454,7 +454,7 @@
               </div>
             </div>
             <div class="mb-3">
-              <label class="form-label fw-semibold">Opening Date</label>
+              <label class="form-label fw-semibold">Opening Date *</label>
               <input type="date" id="newOpenDate" class="form-control" required>
             </div>
             <div class="mb-3">
@@ -1087,6 +1087,7 @@
       }
       const formEl = document.getElementById('newItemForm');
       if (formEl) formEl.reset();
+      setupDateRestrictions();
       window.showToast("Item saved to cloud database!");
     };
 
